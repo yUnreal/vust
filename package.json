@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsx index.ts",
-    "test": "tsx index.test.ts"
+    "test": "tsx index.test.ts",
+    "lint:fix": "eslint src --fix"
   },
   "keywords": [],
   "author": "",
