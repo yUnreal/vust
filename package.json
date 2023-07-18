@@ -4,7 +4,7 @@
   "description": "Base for all TypeScript projects",
   "main": "index.ts",
   "scripts": {
-    "dev": "tsx index.ts",
+    "dev": "tsx src/index.ts",
     "test": "tsx index.test.ts",
     "lint:fix": "eslint src --fix"
   },
