@@ -6,9 +6,9 @@
   "scripts": {
     "build": "tsc && node dist/index.js",
     "test": "tsc && node dist/index.test.ts",
-    "lint:fix": "eslint src --fix",
+    "lint:fix": "eslint . --fix",
     "format:json": "prettier --write \"**/*.json\"",
-    "format:src": "prettier --write \"src/**/*.{js,ts}\"",
+    "format:fix": "prettier --write \"**/*.{js,ts}\"",
     "format:md": "prettier --write \"**/*.{mdx,md}\""
   },
   "keywords": [],
