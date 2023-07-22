@@ -4,3 +4,6 @@ package-lock.json
 
 # Lib tests
 index.test.ts
+
+# Dist
+dist/
