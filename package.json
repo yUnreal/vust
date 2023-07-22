@@ -1,8 +1,8 @@
 {
-  "name": "base",
+  "name": "tsbase",
   "version": "1.0.0",
   "description": "Base for all TypeScript projects",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "tsx src/index.ts",
     "test": "tsx index.test.ts",
@@ -15,6 +15,8 @@
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
+    "prettier": "^3.0.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
   }
