@@ -1,25 +1,16 @@
-# EditorConfig helps developers define and maintain
-# consistent coding styles between different editors and IDEs
-# editorconfig.org
+# https://editorconfig.org
 
-# Top-most EditorConfig file
 root = true
 
-# Define a wildcard for all files
 [*]
 
-# Indentation style and size
 indent_style = space
 indent_size = 4
 
-# End-of-line
 end_of_line = lf
 
-# Character encoding
 charset = utf-8
 
-# Trim trailing whitespace
 trim_trailing_whitespace = true
 
-# Insert final newline
 insert_final_newline = true
