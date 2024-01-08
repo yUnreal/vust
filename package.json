@@ -6,9 +6,9 @@
     "scripts": {
         "test": "tsx index.test.ts",
         "lint:fix": "eslint . --fix",
-        "format:json": "prettier --write \"**/*.json\"",
-        "format:fix": "prettier --write \"**/*.{js,ts}\"",
-        "format:md": "prettier --write \"**/*.{mdx,md}\""
+        "prettier:json": "prettier --write \"**/*.json\"",
+        "prettier:fix": "prettier --write \"**/*.{js,ts}\"",
+        "prettier:md": "prettier --write \"**/*.{mdx,md}\""
     },
     "keywords": [],
     "author": {
