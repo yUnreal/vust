@@ -4,8 +4,7 @@
   "description": "Base for all TypeScript projects",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc && node dist/index.js",
-    "test": "tsc && node dist/index.test.ts",
+    "test": "tsx index.test.ts",
     "lint:fix": "eslint . --fix",
     "format:json": "prettier --write \"**/*.json\"",
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
@@ -24,7 +23,7 @@
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^3.0.0",
-    "tslib": "^2.6.0",
+    "tsx": "^4.7.0",
     "typescript": "^5.1.6"
   }
 }
