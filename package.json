@@ -1,29 +1,29 @@
 {
-  "name": "tsbase",
-  "version": "1.0.0",
-  "description": "Base for all TypeScript projects",
-  "main": "src/index.ts",
-  "scripts": {
-    "test": "tsx index.test.ts",
-    "lint:fix": "eslint . --fix",
-    "format:json": "prettier --write \"**/*.json\"",
-    "format:fix": "prettier --write \"**/*.{js,ts}\"",
-    "format:md": "prettier --write \"**/*.{mdx,md}\""
-  },
-  "keywords": [],
-  "author": {
-    "name": "escoteiros",
-    "url": "https://github.com/yUnreal",
-    "email": "unrealwebdev@gmail.com"
-  },
-  "license": "ISC",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
-    "eslint": "^8.43.0",
-    "eslint-config-prettier": "^8.8.0",
-    "prettier": "^3.0.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.1.6"
-  }
+    "name": "tsbase",
+    "version": "1.0.0",
+    "description": "Base for all TypeScript projects",
+    "main": "src/index.ts",
+    "scripts": {
+        "test": "tsx index.test.ts",
+        "lint:fix": "eslint . --fix",
+        "format:json": "prettier --write \"**/*.json\"",
+        "format:fix": "prettier --write \"**/*.{js,ts}\"",
+        "format:md": "prettier --write \"**/*.{mdx,md}\""
+    },
+    "keywords": [],
+    "author": {
+        "name": "escoteiros",
+        "url": "https://github.com/yUnreal",
+        "email": "unrealwebdev@gmail.com"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "@typescript-eslint/parser": "^5.60.1",
+        "eslint": "^8.43.0",
+        "eslint-config-prettier": "^8.8.0",
+        "prettier": "^3.0.0",
+        "tsx": "^4.7.0",
+        "typescript": "^5.1.6"
+    }
 }
