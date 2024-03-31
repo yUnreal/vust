@@ -8,7 +8,8 @@
         "lint:fix": "eslint . --fix",
         "prettier:json": "prettier --write \"**/*.json\"",
         "prettier:fix": "prettier --write \"**/*.{js,ts}\"",
-        "prettier:md": "prettier --write \"**/*.{mdx,md}\""
+        "prettier:md": "prettier --write \"**/*.{mdx,md}\"",
+        "prettier:all": "prettier --write ."
     },
     "keywords": [],
     "author": {
