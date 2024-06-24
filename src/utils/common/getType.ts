@@ -1,4 +1,4 @@
-import { SchemaType } from '../typings/schema';
+import { SchemaType } from '../../typings/schema';
 
 export const getType = (value: unknown) => {
     switch (typeof value) {

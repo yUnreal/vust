@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import isPlainObject from 'is-plain-obj';
-import { QueryOperators, QueryOptions } from '../typings/query';
-import { AnyObject } from '../typings/utils';
+import { QueryOperators, QueryOptions } from '../../typings/query';
+import { AnyObject } from '../../typings/utils';
 import isEqual from 'lodash.isequal';
 
 export const execQuery = (

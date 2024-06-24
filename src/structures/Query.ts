@@ -1,6 +1,7 @@
 import { Projection, QueryOperators, QueryOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
-import { execQuery } from '../utils/execQuery';
+import { execQuery } from '../utils/query/execQuery';
+import { project } from '../utils/query/project';
 import { Collection } from './Collection';
 
 export class Query<D extends AnyObject> {
@@ -55,6 +56,13 @@ export class Query<D extends AnyObject> {
     }
 
     public exec() {
-        return <D | null>execQuery(this.options, this.collection.driver.read());
+        let data = <D | null>(
+            execQuery(this.options, this.collection.driver.read())
+        );
+
+        if (data && this.options.projection)
+            data = project(data, this.options.projection);
+
+        return data;
     }
 }

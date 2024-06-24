@@ -7,7 +7,7 @@ import {
     SchemaType,
 } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
-import { getType } from '../../utils/getType';
+import { getType } from '../../utils/common/getType';
 
 export abstract class SchemaKey<Type extends SchemaType> {
     protected effects = <Effect<Type>[]>[];
