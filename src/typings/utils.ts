@@ -4,6 +4,10 @@ export type DeepPartial<T> = {
     [K in keyof T]?: DeepPartial<T[K]>;
 };
 
+export type PartialRecord<K extends PropertyKey, V> = {
+    [Key in K]?: V;
+};
+
 export type IsLiteral<T> = [T] extends [string | boolean | number | bigint]
     ? string extends T
         ? false

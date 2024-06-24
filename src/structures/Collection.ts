@@ -1,8 +1,11 @@
 import { JSONDriver } from '../drivers/JSONDriver';
 import { CollectionOptions, CreateDocData } from '../typings/collection';
+import { QueryOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
 import { Doc } from './Doc';
+import { Query } from './Query';
 import { Schema } from './Schema';
+import { join } from 'path';
 
 export class Collection<Shape extends AnyObject> {
     public constructor(
@@ -16,7 +19,8 @@ export class Collection<Shape extends AnyObject> {
 
     public get driver() {
         return (
-            this.options.driver ?? new JSONDriver(`./vasp/${this.name}.json`)
+            this.options.driver ??
+            new JSONDriver(join(__dirname, `../../${this.name}.json`))
         );
     }
 
@@ -29,9 +33,40 @@ export class Collection<Shape extends AnyObject> {
             if (crrData[<string>_uid])
                 throw new Error(`A document with id "${_uid}" already exists`);
 
-            Object.defineProperty(crrData, <string>_uid, { value: data });
+            Object.defineProperty(crrData, <string>_uid, {
+                value: data,
+                enumerable: true,
+            });
         });
 
         return new Doc(data, this);
+    }
+
+    public findUnique(options: QueryOptions<Shape>) {
+        const value = new Query(options, this).exec();
+
+        return value && new Doc(value, this);
+    }
+
+    public deleteOne(options: QueryOptions<Shape>) {
+        const doc = this.findUnique({ ...options, projection: { _uid: true } });
+
+        if (!doc) return null;
+
+        this.driver.update((crrData) => delete crrData[doc._uid]);
+
+        return true;
+    }
+
+    public count() {
+        const data = this.driver.read();
+
+        return Object.keys(data).length;
+    }
+
+    public exists(query: QueryOptions<Shape>['query']) {
+        const doc = this.findUnique({ query, projection: { _uid: true } });
+
+        return Boolean(doc);
     }
 }

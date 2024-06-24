@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 export class JSONDriver<Data extends AnyObject> {
     public constructor(public readonly path: string) {
         if (!path.endsWith('.json')) throw new Error();
-        if (!existsSync(path)) writeFileSync(path, '[]', 'utf8');
+        if (!existsSync(path)) writeFileSync(path, '{}', 'utf8');
     }
 
     public read() {

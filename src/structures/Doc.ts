@@ -6,4 +6,20 @@ export class Doc<Data extends AnyObject> {
         public data: Data,
         public collection: Collection<Data>
     ) {}
+
+    public get _uid() {
+        return <string>this.data._uid;
+    }
+
+    public delete() {
+        return this.collection.deleteOne({ query: { _uid: this._uid } });
+    }
+
+    public save() {
+        this.collection.driver.update(
+            (crrData) => (crrData[this._uid] = this.data)
+        );
+
+        return this;
+    }
 }
