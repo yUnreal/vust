@@ -32,7 +32,6 @@ export class Collection<Shape extends AnyObject> {
             Object.defineProperty(crrData, <string>_uid, { value: data });
         });
 
-        // @ts-expect-error This works
         return new Doc(data, this);
     }
 }
