@@ -82,21 +82,25 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
  * ```
  */
 export type Infer<S extends Record<string, unknown>> = {
-    [K in keyof S]: IsUnion<S[K]> extends true
-        ? UnionSchemaKey<MappedSchemaKeys[InferType<S[K]>][]>
-        : S[K] extends Date
-        ? DateSchemaKey
-        : IsLiteral<S[K]> extends true
-        ? LiteralSchemaKey<S[K]>
-        : S[K] extends AnyObject
-        ? IsRecord<S[K]> extends true
-            ? RecordSchemaKey<
-                  StringSchemaKey,
-                  MappedSchemaKeys[InferType<S[K][string]>]
-              >
-            : ObjectSchemaKey<Infer<S[K]>>
-        : MappedSchemaKeys[InferType<S[K]>];
+    [K in keyof S]: _infer<S[K]>;
 } & { _uid?: UUIDSchemaKey };
+
+export type _infer<V> = V extends Date
+    ? DateSchemaKey
+    : IsLiteral<V> extends true
+    ? LiteralSchemaKey<V>
+    : V extends AnyObject
+    ? IsRecord<V> extends true
+        ? RecordSchemaKey<
+              InferPropertyKey<V>,
+              MappedSchemaKeys[InferType<V[string]>]
+          >
+        : ObjectSchemaKey<Infer<V>>
+    : MappedSchemaKeys[InferType<V>];
+
+type InferPropertyKey<V extends AnyObject> = keyof V extends number
+    ? NumberSchemaKey
+    : StringSchemaKey;
 
 /**
  * Infer the schema type of a value
