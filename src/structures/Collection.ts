@@ -1,7 +1,8 @@
 import { JSONDriver } from '../drivers/JSONDriver';
 import { CollectionOptions, CreateDocData } from '../typings/collection';
-import { QueryOptions } from '../typings/query';
+import { QueryOptions, UpdateOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
+import { execUpdate } from '../utils/query/execUpdate';
 import { Doc } from './Doc';
 import { Query } from './Query';
 import { Schema } from './Schema';
@@ -77,6 +78,28 @@ export class Collection<Shape extends AnyObject> {
         this.driver.update((crrData) => delete crrData[doc._uid]);
 
         return true;
+    }
+
+    /**
+     * Updates a document of the collection
+     * @param query The query to find the document
+     * @param options The options that will be used to update the document
+     *
+     * @remarks Do **NOT** use projection in keys that you will update
+     */
+    public updateOne(
+        query: QueryOptions<Shape>,
+        options: UpdateOptions<Shape>
+    ) {
+        const doc = this.findUnique(query);
+
+        if (!doc) return null;
+
+        const updatedData = execUpdate(doc.data, options);
+
+        this.driver.update((crrData) => (crrData[doc._uid] = updatedData));
+
+        return new Doc(updatedData, this);
     }
 
     /**

@@ -1,4 +1,4 @@
-import { AnyObject, DeepPartial, PartialRecord } from './utils';
+import { AnyObject, DeepPartial, Find, PartialRecord } from './utils';
 
 export enum QueryOperators {
     //#region Any
@@ -29,6 +29,26 @@ export interface QueryOptions<D extends AnyObject> {
         | (QueryOperatorBased<D> & {
               [QueryOperators.Where]?: WhereQueryFn<D>;
           });
+}
+
+export interface UpdateOperatorsBased<D extends AnyObject> {
+    [UpdateOperators.Remove]?: (keyof D)[];
+    [UpdateOperators.Set]?: Partial<D>;
+    [UpdateOperators.Rename]?: PartialRecord<keyof D, string>;
+    [UpdateOperators.Increment]?: Partial<Pick<D, Find<D, number>>>;
+    [UpdateOperators.Decrement]?: Partial<Pick<D, Find<D, number>>>;
+}
+
+export type UpdateOptions<D extends AnyObject> =
+    | DeepPartial<D>
+    | UpdateOperatorsBased<D>;
+
+export enum UpdateOperators {
+    Increment = 'Increment',
+    Remove = 'Remove',
+    Set = 'Set',
+    Rename = 'Rename',
+    Decrement = 'Decrement',
 }
 
 export type Projection<D extends AnyObject> = PartialRecord<keyof D, boolean>;

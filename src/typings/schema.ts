@@ -3,7 +3,7 @@ import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
 import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
 import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
-import { AnyObject, IsLiteral, IsRecord } from './utils';
+import { AnyObject, Find, IsLiteral, IsRecord } from './utils';
 import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
 import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
 import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
@@ -138,10 +138,6 @@ export type AnySchemaKey =
     | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
 
 export type PropertyKeySchema = StringSchemaKey | NumberSchemaKey;
-
-type Find<T extends MappedSchemaType, V> = {
-    [K in keyof T]: T[K] extends V ? K : never;
-}[keyof T];
 
 /**
  * The effect function used to validate a value

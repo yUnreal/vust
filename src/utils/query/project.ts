@@ -5,6 +5,10 @@ export const project = <D extends AnyObject>(
     data: D,
     projection: Projection<D>
 ): D => {
+    const UNIQUE_DOC_ID_KEY = '_uid';
+
+    if (UNIQUE_DOC_ID_KEY in data) return { _uid: data[UNIQUE_DOC_ID_KEY] };
+
     const newData: Partial<D> = {};
 
     if (
@@ -17,12 +21,6 @@ export const project = <D extends AnyObject>(
     }
 
     for (const [key, shouldInclude] of Object.entries(projection)) {
-        const UNIQUE_DOC_ID_KEY = '_uid';
-
-        if (key === UNIQUE_DOC_ID_KEY)
-            throw new Error(
-                `Cannot select/remove the "${UNIQUE_DOC_ID_KEY}" key`
-            );
         if (shouldInclude) {
             Object.defineProperty(newData, key, {
                 value: data[key],

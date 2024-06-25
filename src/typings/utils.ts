@@ -23,3 +23,7 @@ export type IsLiteral<T> = [T] extends [string | boolean | number | bigint]
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type IsRecord<R extends AnyObject> = {} extends R ? true : false;
+
+export type Find<T, V> = {
+    [K in keyof T]: T[K] extends V ? K : never;
+}[keyof T];
