@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import isPlainObject from 'is-plain-obj';
 import { UpdateOperators, UpdateOptions } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 
@@ -9,14 +10,29 @@ export const execUpdate = <D extends AnyObject>(
     for (const [operator, value] of Object.entries(options)) {
         switch (operator) {
             case UpdateOperators.Set:
+                if (!isPlainObject(value))
+                    throw new Error(
+                        `Invalid value for "${UpdateOperators.Set}" operator`
+                    );
+
                 data = { ...data, ...value };
 
                 break;
             case UpdateOperators.Remove:
+                if (!Array.isArray(value))
+                    throw new Error(
+                        `Expected an array in operator "${UpdateOperators.Remove}"`
+                    );
+
                 for (const key of value) delete data[key];
 
                 break;
             case UpdateOperators.Rename:
+                if (!isPlainObject(value))
+                    throw new Error(
+                        `Expected a mapped object of strings in operator "${UpdateOperators.Rename}"`
+                    );
+
                 for (const [key, newKey] of Object.entries(value)) {
                     Object.defineProperty(data, <string>newKey, {
                         value: data[key],
@@ -28,6 +44,11 @@ export const execUpdate = <D extends AnyObject>(
 
                 break;
             case UpdateOperators.Increment:
+                if (!isPlainObject(value))
+                    throw new Error(
+                        `Expected a mapped object of numbers in operator "${UpdateOperators.Increment}"`
+                    );
+
                 for (const [key, amount] of Object.entries(value)) {
                     if (typeof amount !== 'number')
                         throw new Error('Cannot increment non-number values');
@@ -46,6 +67,11 @@ export const execUpdate = <D extends AnyObject>(
 
                 break;
             case UpdateOperators.Decrement:
+                if (!isPlainObject(value))
+                    throw new Error(
+                        `Expected a mapped object of numbers in operator "${UpdateOperators.Decrement}"`
+                    );
+
                 for (const [key, amount] of Object.entries(value)) {
                     if (typeof amount !== 'number')
                         throw new Error('Cannot decrement non-number values');
