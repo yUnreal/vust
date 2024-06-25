@@ -1,29 +1,15 @@
 import isPlainObject from 'is-plain-obj';
 import uuid from 'uuid-random';
-import {
-    Infer,
-    SchemaType,
-    AnySchemaKey as AnySchemaKeyType,
-    SchemaOptions,
-} from '../typings/schema';
+import { Infer, SchemaType, SchemaOptions } from '../typings/schema';
 import { AnyObject } from '../typings/utils';
-import { BigIntSchemaKey } from './schema/BigIntSchemaKey';
-import { NumberSchemaKey } from './schema/NumberSchemaKey';
-import { StringSchemaKey } from './schema/StringSchemaKey';
-import { BooleanSchemaKey } from './schema/BooleanSchemaKey';
-import { UUIDSchemaKey } from './schema/UUIDSchemaKey';
-import { AnySchemaKey } from './schema/AnySchemaKey';
-import { ObjectSchemaKey } from './schema/ObjectSchemaKey';
-import { DateSchemaKey } from './schema/DateSchemaKey';
-import { LiteralSchemaKey } from './schema/LiteralSchemaKey';
-import { RecordSchemaKey } from './schema/RecordSchemaKey';
+import { S } from './S';
 
 export class Schema<Shape extends AnyObject> {
     public constructor(
         public shape: Infer<Shape>,
         public options = <SchemaOptions>{}
     ) {
-        shape['_uid'] ??= Schema.id();
+        shape['_uid'] ??= S.id();
 
         const VALID_ID_TYPES = [SchemaType.String, SchemaType.UUID];
 
@@ -31,46 +17,6 @@ export class Schema<Shape extends AnyObject> {
             throw new Error(
                 'Schema key "_uid" must be a UUID/string schema key'
             );
-    }
-
-    public static string() {
-        return new StringSchemaKey({ type: SchemaType.String });
-    }
-
-    public static id() {
-        return new UUIDSchemaKey({ type: SchemaType.UUID });
-    }
-
-    public static number() {
-        return new NumberSchemaKey({ type: SchemaType.Number });
-    }
-
-    public static bigint() {
-        return new BigIntSchemaKey({ type: SchemaType.BigInt });
-    }
-
-    public static boolean() {
-        return new BooleanSchemaKey({ type: SchemaType.Boolean });
-    }
-
-    public static object<S extends Record<string, AnySchemaKeyType>>(shape: S) {
-        return new ObjectSchemaKey(shape, { type: SchemaType.Object });
-    }
-
-    public static any() {
-        return new AnySchemaKey({ type: SchemaType.Any });
-    }
-
-    public static date() {
-        return new DateSchemaKey({ type: SchemaType.Date });
-    }
-
-    public static literal<V>(value: V) {
-        return new LiteralSchemaKey(value, { type: SchemaType.Literal });
-    }
-
-    public static record<V extends AnySchemaKeyType>(value: V) {
-        return new RecordSchemaKey(value, { type: SchemaType.Record });
     }
 
     public parse<V>(object: V) {
