@@ -46,7 +46,10 @@ export class Schema<Shape extends AnyObject> {
                 delete object[key];
             }
 
-            if (schema.type !== SchemaType.Any && !schema.isSafe(value))
+            if (
+                ![SchemaType.Any, SchemaType.Union].includes(schema.type) &&
+                !schema.isSafe(value)
+            )
                 throw new Error(
                     `Invalid schema key "${key}" type, expected "${schema.type}"`
                 );

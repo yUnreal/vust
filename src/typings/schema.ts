@@ -3,12 +3,13 @@ import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
 import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
 import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
-import { AnyObject, Find, IsLiteral, IsRecord } from './utils';
+import { AnyObject, Find, IsLiteral, IsRecord, IsUnion } from './utils';
 import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
 import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
 import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
 import { LiteralSchemaKey } from '../structures/schema/LiteralSchemaKey';
 import { RecordSchemaKey } from '../structures/schema/RecordSchemaKey';
+import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
 
 /**
  * All types available in schema keys
@@ -36,6 +37,7 @@ export enum SchemaType {
      * Represents the type of **any** object
      */
     Record = 'record',
+    Union = 'union',
 }
 
 export interface SchemaKeyDefinition<Type extends SchemaType> {
@@ -80,7 +82,9 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
  * ```
  */
 export type Infer<S extends Record<string, unknown>> = {
-    [K in keyof S]: S[K] extends Date
+    [K in keyof S]: IsUnion<S[K]> extends true
+        ? UnionSchemaKey<MappedSchemaKeys[InferType<S[K]>][]>
+        : S[K] extends Date
         ? DateSchemaKey
         : IsLiteral<S[K]> extends true
         ? LiteralSchemaKey<S[K]>
@@ -110,6 +114,10 @@ export interface MappedSchemaType {
     [SchemaType.Date]: Date;
     [SchemaType.Literal]: unknown;
     [SchemaType.Record]: AnyObject;
+    [SchemaType.Union]: Exclude<MappedSchemaType, SchemaType.Union>[Exclude<
+        SchemaType,
+        SchemaType.Union
+    >];
 }
 
 export interface MappedSchemaKeys {
@@ -123,6 +131,7 @@ export interface MappedSchemaKeys {
     [SchemaType.Date]: DateSchemaKey;
     [SchemaType.Literal]: LiteralSchemaKey<unknown>;
     [SchemaType.Record]: RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
+    [SchemaType.Union]: UnionSchemaKey<AnySchemaKey[]>;
 }
 
 export type AnySchemaKey =
@@ -135,7 +144,8 @@ export type AnySchemaKey =
     | ObjectSchemaKey<{ [K in string]: AnySchemaKey }>
     | DateSchemaKey
     | LiteralSchemaKey<unknown>
-    | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
+    | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>
+    | UnionSchemaKey<AnySchemaKey[]>;
 
 export type PropertyKeySchema = StringSchemaKey | NumberSchemaKey;
 

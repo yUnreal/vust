@@ -27,3 +27,9 @@ export type IsRecord<R extends AnyObject> = {} extends R ? true : false;
 export type Find<T, V> = {
     [K in keyof T]: T[K] extends V ? K : never;
 }[keyof T];
+
+export type IsUnion<T, U extends T = T> = T extends unknown
+    ? [U] extends [T]
+        ? false
+        : true
+    : false;
