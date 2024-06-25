@@ -1,4 +1,5 @@
 import isPlainObject from 'is-plain-obj';
+import { UpdateOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
 import { Collection } from './Collection';
 
@@ -31,6 +32,16 @@ export class Doc<Data extends AnyObject> {
      */
     public get _uid() {
         return <string>this.data._uid;
+    }
+
+    /**
+     * Update this document
+     * @param options The options to update
+     */
+    public update(options: UpdateOptions<Data>) {
+        return <Doc<Data>>(
+            this.collection.updateOne({ query: { _uid: this._uid } }, options)
+        );
     }
 
     /**
