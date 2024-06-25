@@ -1,3 +1,4 @@
+import { EffectError } from '../../errors/EffectError';
 import {
     Effect,
     EffectError,
@@ -53,7 +54,8 @@ export abstract class SchemaKey<Type extends SchemaType> {
             throw new Error(`Invalid schema key type, expected ${this.type}`);
 
         for (const { effect, message } of this.effects) {
-            if (!effect(value)) throw new Error(message);
+            // @ts-expect-error Ignore it
+            if (!effect(value)) throw new EffectError(message, value, effect);
         }
 
         return value;

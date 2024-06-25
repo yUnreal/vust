@@ -2,6 +2,7 @@
 import isPlainObject from 'is-plain-obj';
 import { UpdateOperators, UpdateOptions } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
+import { VustError } from '../../errors/VustError';
 
 export const execUpdate = <D extends AnyObject>(
     data: D,
@@ -11,7 +12,7 @@ export const execUpdate = <D extends AnyObject>(
         switch (operator) {
             case UpdateOperators.Set:
                 if (!isPlainObject(value))
-                    throw new Error(
+                    throw new VustError(
                         `Invalid value for "${UpdateOperators.Set}" operator`
                     );
 
@@ -20,7 +21,7 @@ export const execUpdate = <D extends AnyObject>(
                 break;
             case UpdateOperators.Remove:
                 if (!Array.isArray(value))
-                    throw new Error(
+                    throw new VustError(
                         `Expected an array in operator "${UpdateOperators.Remove}"`
                     );
 
@@ -29,7 +30,7 @@ export const execUpdate = <D extends AnyObject>(
                 break;
             case UpdateOperators.Rename:
                 if (!isPlainObject(value))
-                    throw new Error(
+                    throw new VustError(
                         `Expected a mapped object of strings in operator "${UpdateOperators.Rename}"`
                     );
 
@@ -45,17 +46,19 @@ export const execUpdate = <D extends AnyObject>(
                 break;
             case UpdateOperators.Increment:
                 if (!isPlainObject(value))
-                    throw new Error(
+                    throw new VustError(
                         `Expected a mapped object of numbers in operator "${UpdateOperators.Increment}"`
                     );
 
                 for (const [key, amount] of Object.entries(value)) {
                     if (typeof amount !== 'number')
-                        throw new Error('Cannot increment non-number values');
+                        throw new VustError(
+                            'Cannot increment non-number values'
+                        );
                     if (amount < 1)
-                        throw new Error('Cannot increment less than "1"');
+                        throw new VustError('Cannot increment less than "1"');
                     if (typeof data[key] !== 'number')
-                        throw new Error(
+                        throw new VustError(
                             `Key "${key}" is not a number to increment`
                         );
 
@@ -68,17 +71,19 @@ export const execUpdate = <D extends AnyObject>(
                 break;
             case UpdateOperators.Decrement:
                 if (!isPlainObject(value))
-                    throw new Error(
+                    throw new VustError(
                         `Expected a mapped object of numbers in operator "${UpdateOperators.Decrement}"`
                     );
 
                 for (const [key, amount] of Object.entries(value)) {
                     if (typeof amount !== 'number')
-                        throw new Error('Cannot decrement non-number values');
+                        throw new VustError(
+                            'Cannot decrement non-number values'
+                        );
                     if (amount < 1)
-                        throw new Error('Cannot decrement less than "1"');
+                        throw new VustError('Cannot decrement less than "1"');
                     if (typeof data[key] !== 'number')
-                        throw new Error(
+                        throw new VustError(
                             `Key "${key}" is not a number to decrement`
                         );
 

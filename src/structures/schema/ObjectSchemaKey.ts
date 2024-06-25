@@ -1,3 +1,4 @@
+import { ValidationError } from '../../errors/ValidationError';
 import {
     AnySchemaKey,
     SchemaKeyDefinition,
@@ -22,7 +23,11 @@ export class ObjectSchemaKey<
         for (const [key, crrValue] of Object.entries(<AnyObject>value)) {
             const schema = this.shape[key];
 
-            if (!schema) throw new Error(`Unknown key "${key}" when parsing`);
+            if (!schema)
+                throw new ValidationError(
+                    `Unknown key "${key}" when parsing`,
+                    key
+                );
 
             schema.parse(fullData, crrValue);
         }

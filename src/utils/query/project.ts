@@ -1,3 +1,4 @@
+import { VustError } from '../../errors/VustError';
 import { Projection } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 
@@ -15,7 +16,7 @@ export const project = <D extends AnyObject>(
         Object.values(projection).some(Boolean) &&
         Object.values(projection).some((v) => !v)
     ) {
-        throw new Error(
+        throw new VustError(
             'Cannot use truthy/falsy projections in one projection'
         );
     }

@@ -1,3 +1,4 @@
+import { ValidationError } from '../../errors/ValidationError';
 import {
     AnySchemaKey,
     SchemaKeyDefinition,
@@ -23,8 +24,9 @@ export class UnionSchemaKey<
 
     public parse(fullData: AnyObject, value?: unknown) {
         if (!this.unions.some((schema) => schema.isParsable(fullData, value)))
-            throw new Error(
-                `Value failed in ${this.unions.length} unions schema`
+            throw new ValidationError(
+                `Value failed in ${this.unions.length} unions schema`,
+                value
             );
 
         return value;

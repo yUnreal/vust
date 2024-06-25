@@ -1,4 +1,5 @@
 import { JSONDriver } from '../drivers/JSONDriver';
+import { CollectionError } from '../errors/CollectionError';
 import { CollectionOptions, CreateDocData } from '../typings/collection';
 import { QueryOptions, UpdateOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
@@ -53,7 +54,10 @@ export class Collection<Shape extends AnyObject> {
 
         this.driver.update((crrData) => {
             if (crrData[<string>_uid])
-                throw new Error(`A document with id "${_uid}" already exists`);
+                throw new CollectionError(
+                    `A document with id "${_uid}" already exists`,
+                    this
+                );
 
             Object.defineProperty(crrData, <string>_uid, {
                 value: data,

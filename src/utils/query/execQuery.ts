@@ -3,6 +3,7 @@ import isPlainObject from 'is-plain-obj';
 import { QueryOperators, QueryOptions } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 import isEqual from 'lodash.isequal';
+import { VustError } from '../../errors/VustError';
 
 export const execQuery = (
     { query, skip }: QueryOptions<AnyObject>,
@@ -20,7 +21,7 @@ export const execQuery = (
                     ) &&
                     !isPlainObject(value))
             )
-                throw new Error(`Invalid operator "${key}" query`);
+                throw new VustError(`Invalid operator "${key}" query`);
 
             switch (key) {
                 case QueryOperators.Comment:
