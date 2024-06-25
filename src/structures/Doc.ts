@@ -1,3 +1,4 @@
+import isPlainObject from 'is-plain-obj';
 import { AnyObject } from '../typings/utils';
 import { Collection } from './Collection';
 
@@ -14,7 +15,16 @@ export class Doc<Data extends AnyObject> {
          * The collection this document belongs to
          */
         public collection: Collection<Data>
-    ) {}
+    ) {
+        for (const [key, value] of Object.entries(data)) {
+            const DATE_KEY = '$date';
+
+            if (isPlainObject(value) && value[DATE_KEY])
+                Object.defineProperty(data, key, {
+                    value: new Date(<number>value[DATE_KEY]),
+                });
+        }
+    }
 
     /**
      * The unique UUID of this document

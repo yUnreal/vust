@@ -43,6 +43,14 @@ export class Collection<Shape extends AnyObject> {
 
         const { _uid } = data;
 
+        for (const [key, value] of Object.entries(data)) {
+            if (value instanceof Date)
+                Object.defineProperty(data, key, {
+                    value: { $date: value.getTime() },
+                    enumerable: true,
+                });
+        }
+
         this.driver.update((crrData) => {
             if (crrData[<string>_uid])
                 throw new Error(`A document with id "${_uid}" already exists`);
