@@ -18,6 +18,7 @@ export enum QueryOperators {
     //#region Strings
     Pattern = 'Pattern',
     Length = 'Length',
+    //#endregion
 }
 
 export interface QueryOptions<D extends AnyObject> {

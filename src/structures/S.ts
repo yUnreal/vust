@@ -11,43 +11,76 @@ import { StringSchemaKey } from './schema/StringSchemaKey';
 import { UUIDSchemaKey } from './schema/UUIDSchemaKey';
 import { AnySchemaKey as AnySchemaKeyType } from '../typings/schema';
 
+/**
+ * Main class to create new schema keys
+ */
 export class S {
+    /**
+     * Creates a new string schema key
+     */
     public static string() {
         return new StringSchemaKey({ type: SchemaType.String });
     }
 
+    /**
+     * Creates a new unique ID schema key
+     */
     public static id() {
         return new UUIDSchemaKey({ type: SchemaType.UUID });
     }
 
+    /**
+     * Creates a new number schema key
+     */
     public static number() {
         return new NumberSchemaKey({ type: SchemaType.Number });
     }
 
+    /**
+     * Creates a new bigint schema key
+     */
     public static bigint() {
         return new BigIntSchemaKey({ type: SchemaType.BigInt });
     }
 
+    /**
+     * Creates a new boolean schema key
+     */
     public static boolean() {
         return new BooleanSchemaKey({ type: SchemaType.Boolean });
     }
 
+    /**
+     * Creates a new object schema key
+     */
     public static object<S extends Record<string, AnySchemaKeyType>>(shape: S) {
         return new ObjectSchemaKey(shape, { type: SchemaType.Object });
     }
 
+    /**
+     * Creates a new "any" schema key
+     */
     public static any() {
         return new AnySchemaKey({ type: SchemaType.Any });
     }
 
+    /**
+     * Creates a new date schema key
+     */
     public static date() {
         return new DateSchemaKey({ type: SchemaType.Date });
     }
 
+    /**
+     * Creates a new literal schema key
+     */
     public static literal<V>(value: V) {
         return new LiteralSchemaKey(value, { type: SchemaType.Literal });
     }
 
+    /**
+     * Creates a new record schema key
+     */
     public static record<
         K extends PropertyKeySchema,
         V extends AnySchemaKeyType,
@@ -55,6 +88,9 @@ export class S {
         return new RecordSchemaKey(key, value, { type: SchemaType.Record });
     }
 
+    /**
+     * All types used in schema keys
+     */
     public static get types() {
         return SchemaType;
     }

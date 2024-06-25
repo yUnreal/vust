@@ -4,6 +4,9 @@ import { Infer, SchemaType, SchemaOptions } from '../typings/schema';
 import { AnyObject } from '../typings/utils';
 import { S } from './S';
 
+/**
+ * Main class to parse/validate values when received in collections
+ */
 export class Schema<Shape extends AnyObject> {
     public constructor(
         public shape: Infer<Shape>,
@@ -19,6 +22,10 @@ export class Schema<Shape extends AnyObject> {
             );
     }
 
+    /**
+     * Parses an object with the schema shape, the object may change
+     * @param object The object to parse
+     */
     public parse<V>(object: V) {
         if (!isPlainObject(object))
             throw new Error('Schema value must be an object');
@@ -50,6 +57,10 @@ export class Schema<Shape extends AnyObject> {
         return <Shape & { _uid: string }>(<unknown>object);
     }
 
+    /**
+     * Checks wheter the value is a compatible with the schema
+     * @param value The value to validate
+     */
     public isValid(value: unknown): value is Shape {
         try {
             this.parse(value);
@@ -60,6 +71,19 @@ export class Schema<Shape extends AnyObject> {
         }
     }
 
+    /**
+     * Extends the current schema with another schema
+     * @param shape The shape to extend with
+     * @example
+     * const user = new User({
+     *     name: S.string(),
+     *     age: S.number().integer()
+     * });
+     *
+     * const employer = user.extend({
+     *     role: S.string()
+     * });
+     */
     public extend<Other extends AnyObject>(
         shape: Infer<Omit<Other, keyof Shape>>
     ) {

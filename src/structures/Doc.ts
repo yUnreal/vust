@@ -1,20 +1,48 @@
 import { AnyObject } from '../typings/utils';
 import { Collection } from './Collection';
 
+/**
+ * Represents the class to manage the data found of a document
+ */
 export class Doc<Data extends AnyObject> {
     public constructor(
+        /**
+         * The data of this document
+         */
         public data: Data,
+        /**
+         * The collection this document belongs to
+         */
         public collection: Collection<Data>
     ) {}
 
+    /**
+     * The unique UUID of this document
+     */
     public get _uid() {
         return <string>this.data._uid;
     }
 
+    /**
+     * Deletes this document in the collection
+     */
     public delete() {
         return this.collection.deleteOne({ query: { _uid: this._uid } });
     }
 
+    /**
+     * Saves in the collection the changes made in this document
+     *
+     * @example
+     * ```ts
+     * const person = persons.findUnique({ query: { name: 'Kauz' } });
+     *
+     * person.data.name = 'Drezzy';
+     *
+     * // Now the `name` of the document in the collection is `"Drezzy"`
+     * person.save();
+     * ```
+     */
     public save() {
         this.collection.driver.update(
             (crrData) => (crrData[this._uid] = this.data)

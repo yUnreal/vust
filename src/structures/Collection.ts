@@ -7,16 +7,25 @@ import { Query } from './Query';
 import { Schema } from './Schema';
 import { join } from 'path';
 
+/**
+ * Main class used to create/save/delete/update/find document(s) in a file
+ */
 export class Collection<Shape extends AnyObject> {
     public constructor(
         public options: CollectionOptions<Shape>,
         public schema: Schema<Shape>
     ) {}
 
+    /**
+     * The name of this collection
+     */
     public get name() {
         return this.options.name;
     }
 
+    /**
+     * The driver used to read/update data saved in this collection
+     */
     public get driver() {
         return (
             this.options.driver ??
@@ -24,6 +33,10 @@ export class Collection<Shape extends AnyObject> {
         );
     }
 
+    /**
+     * Creates a new document in this collection
+     * @param data The data to save
+     */
     public create(data: CreateDocData<Shape>) {
         this.schema.parse(data);
 
@@ -42,12 +55,20 @@ export class Collection<Shape extends AnyObject> {
         return new Doc(data, this);
     }
 
+    /**
+     * Finds an unique document in the collection
+     * @param options The options of the query
+     */
     public findUnique(options: QueryOptions<Shape>) {
         const value = new Query(options, this).exec();
 
         return value && new Doc(value, this);
     }
 
+    /**
+     * Deletes one document of the collection
+     * @param options The options of the query to delete the document
+     */
     public deleteOne(options: QueryOptions<Shape>) {
         const doc = this.findUnique({ ...options, projection: { _uid: true } });
 
@@ -58,12 +79,19 @@ export class Collection<Shape extends AnyObject> {
         return true;
     }
 
+    /**
+     * Count all documents saved in the collection
+     */
     public count() {
         const data = this.driver.read();
 
         return Object.keys(data).length;
     }
 
+    /**
+     * Checks if a document exists in the collection by query
+     * @param query The query to used to find the document
+     */
     public exists(query: QueryOptions<Shape>['query']) {
         const doc = this.findUnique({ query, projection: { _uid: true } });
 

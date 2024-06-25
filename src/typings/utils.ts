@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyObject = Record<string, any>;
 
 export type DeepPartial<T> = {
@@ -20,4 +21,5 @@ export type IsLiteral<T> = [T] extends [string | boolean | number | bigint]
         : true
     : false;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type IsRecord<R extends AnyObject> = {} extends R ? true : false;

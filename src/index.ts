@@ -6,6 +6,11 @@ export { Collection } from './structures/Collection';
 export { Schema } from './structures/Schema';
 export { S } from './structures/S';
 
+/**
+ * Creates a new collection
+ * @param name The name of the collection
+ * @param schema The schema to use in this collection
+ */
 export const collection = <D extends AnyObject>(
     name: string,
     schema: Schema<D>
