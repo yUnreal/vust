@@ -1,7 +1,7 @@
 import { EffectError } from '../../errors/EffectError';
 import {
     Effect,
-    EffectError,
+    EffectError as EffectErrorType,
     EffectFunction,
     MappedSchemaType,
     SchemaKeyDefinition,
@@ -19,7 +19,7 @@ export abstract class SchemaKey<Type extends SchemaType> {
         return this.options.type;
     }
 
-    public effect(fn: EffectFunction<Type>, message: EffectError | string) {
+    public effect(fn: EffectFunction<Type>, message: EffectErrorType | string) {
         this.effects.push({
             effect: fn,
             message: typeof message === 'string' ? message : message.message,
