@@ -14,7 +14,13 @@ import { join } from 'path';
  */
 export class Collection<Shape extends AnyObject> {
     public constructor(
+        /**
+         * The options used in this collection
+         */
         public options: CollectionOptions<Shape>,
+        /**
+         * The schema that belongs to this document
+         */
         public schema: Schema<Shape>
     ) {}
 
@@ -68,6 +74,11 @@ export class Collection<Shape extends AnyObject> {
         return new Doc(data, this);
     }
 
+    public findUnique(
+        options: QueryOptions<Shape> & { raw: true }
+    ): (Shape & { _uid: string }) | null;
+    public findUnique(options: QueryOptions<Shape>): Doc<Shape> | null;
+
     /**
      * Finds an unique document in the collection
      * @param options The options of the query
@@ -75,7 +86,9 @@ export class Collection<Shape extends AnyObject> {
     public findUnique(options: QueryOptions<Shape>) {
         const value = new Query(options, this).exec();
 
-        return value && new Doc(value, this);
+        if (!value) return null;
+
+        return options.raw ? value : new Doc(value, this);
     }
 
     /**
@@ -83,7 +96,11 @@ export class Collection<Shape extends AnyObject> {
      * @param options The options of the query to delete the document
      */
     public deleteOne(options: QueryOptions<Shape>) {
-        const doc = this.findUnique({ ...options, projection: { _uid: true } });
+        const doc = this.findUnique({
+            ...options,
+            projection: { _uid: true },
+            raw: true,
+        });
 
         if (!doc) return null;
 
@@ -103,11 +120,11 @@ export class Collection<Shape extends AnyObject> {
         query: QueryOptions<Shape>,
         options: UpdateOptions<Shape>
     ) {
-        const doc = this.findUnique(query);
+        const doc = this.findUnique({ ...query, raw: true });
 
         if (!doc) return null;
 
-        const updatedData = execUpdate(doc.data, options);
+        const updatedData = execUpdate(doc, options);
 
         this.driver.update((crrData) => (crrData[doc._uid] = updatedData));
 
@@ -128,7 +145,11 @@ export class Collection<Shape extends AnyObject> {
      * @param query The query to used to find the document
      */
     public exists(query: QueryOptions<Shape>['query']) {
-        const doc = this.findUnique({ query, projection: { _uid: true } });
+        const doc = this.findUnique({
+            query,
+            projection: { _uid: true },
+            raw: true,
+        });
 
         return Boolean(doc);
     }

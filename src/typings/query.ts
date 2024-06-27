@@ -47,13 +47,26 @@ export interface QueryOperatorBased<D extends AnyObject> {
 }
 
 export interface QueryOptions<D extends AnyObject> {
+    /**
+     * How many documents Vust must skip before querying
+     */
     skip?: number;
+    /**
+     * The projection of the data
+     */
     projection?: Projection<D>;
+    /**
+     * The query object to find the document(s)
+     */
     query:
         | (DeepPartial<D> & { _uid?: string })
         | (QueryOperatorBased<D> & {
               [QueryOperators.Where]?: WhereQueryFn<D>;
           });
+    /**
+     * Whether should return the raw data of the document, or a instance of {@link Doc}
+     */
+    raw?: boolean;
 }
 
 export interface UpdateOperatorsBased<D extends AnyObject> {
