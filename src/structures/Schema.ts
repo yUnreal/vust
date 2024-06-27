@@ -12,7 +12,7 @@ import { ValidationError } from '../errors/ValidationError';
 export class Schema<Shape extends AnyObject> {
     public constructor(
         public shape: Infer<Shape>,
-        public options = <SchemaOptions>{}
+        public options = <SchemaOptions>{ strict: true }
     ) {
         shape['_uid'] ??= S.id();
 
@@ -33,8 +33,10 @@ export class Schema<Shape extends AnyObject> {
         if (!isPlainObject(object))
             throw new ValidationError('Schema value must be an object', object);
 
-        // @ts-expect-error Fuck it
-        object['_uid'] ??= uuid();
+        Object.defineProperty(object, '_uid', {
+            value: uuid(),
+            enumerable: true,
+        });
 
         if (typeof object._uid !== 'string')
             throw new ValidationError(
@@ -42,29 +44,20 @@ export class Schema<Shape extends AnyObject> {
                 object._uid
             );
 
-        for (const [key, value] of Object.entries(object)) {
-            const schema = this.shape[key];
+        for (const [key, schema] of Object.entries(this.shape)) {
+            if (!(key in object)) {
+                if (schema.options.default)
+                    Object.defineProperty(object, key, {
+                        value: schema.options.default(object),
+                        enumerable: true,
+                    });
 
-            if (!schema) {
-                if (this.options.strict)
-                    throw new ValidationError(
-                        `Unknown key "${key}" when parsing`,
-                        key
-                    );
+                if (schema.isOptional()) continue;
 
-                delete object[key];
+                throw new Error(`Key "${key}" is required`);
             }
 
-            if (
-                ![SchemaType.Any, SchemaType.Union].includes(schema.type) &&
-                !schema.isSafe(value)
-            )
-                throw new ValidationError(
-                    `Invalid schema key "${key}" type, expected "${schema.type}"`,
-                    value
-                );
-
-            schema.parse(object, value);
+            schema.parse(object, object[key]);
         }
 
         return <Shape & { _uid: string }>(<unknown>object);

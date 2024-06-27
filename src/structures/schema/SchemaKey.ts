@@ -46,10 +46,11 @@ export abstract class SchemaKey<Type extends SchemaType> {
         }
     }
 
-    public parse(
-        fullData: AnyObject,
-        value = this.options.default ? this.options.default(fullData) : void 0
-    ) {
+    public parse(fullData: AnyObject, value?: MappedSchemaType[Type]) {
+        value ??= this.options.default
+            ? this.options.default(fullData)
+            : void 0;
+
         if (this.type !== SchemaType.Any && !this.isSafe(value))
             throw new Error(`Invalid schema key type, expected ${this.type}`);
 
@@ -62,19 +63,20 @@ export abstract class SchemaKey<Type extends SchemaType> {
     }
 
     public isOptional() {
-        return Boolean(this.options.optional);
+        return this.options.optional;
     }
 
-    public optional() {
+    public default<Data extends AnyObject>(
+        fn: MappedSchemaType[Type] | ((data: Data) => MappedSchemaType[Type])
+    ) {
         this.options.optional = true;
+        this.options.default = typeof fn === 'function' ? fn : () => fn;
 
         return this;
     }
 
-    public default<Data extends AnyObject>(
-        fn: (data: Data) => MappedSchemaType[Type]
-    ) {
-        this.options.default = fn;
+    public optional() {
+        this.options.optional = true;
 
         return this;
     }

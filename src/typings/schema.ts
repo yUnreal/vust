@@ -3,7 +3,7 @@ import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
 import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
 import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
-import { AnyObject, Find, IsLiteral, IsRecord, IsUnion } from './utils';
+import { AnyObject, Find, IsLiteral, IsRecord } from './utils';
 import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
 import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
 import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
@@ -45,9 +45,6 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
      * The type of this schema key
      */
     type: Type;
-    /**
-     * Whether this key should be optional or not, required by default
-     */
     optional?: true;
     /**
      * A function to make a default value when a value is not supplied
@@ -178,5 +175,5 @@ export interface SchemaOptions {
     /**
      * Whether the schema must be strict or not
      */
-    strict?: true;
+    strict?: boolean;
 }
