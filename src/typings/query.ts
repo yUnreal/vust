@@ -26,12 +26,20 @@ export interface QueryOperatorBased<D extends AnyObject> {
     [QueryOperators.NotEqual]?: DeepPartial<D>;
     [QueryOperators.Comment]?: string;
     [QueryOperators.Where]?: WhereQueryFn<D>;
-    [QueryOperators.Greater]?: Partial<Pick<D, Find<D, number>>>;
-    [QueryOperators.Less]?: Partial<Pick<D, Find<D, number>>>;
-    [QueryOperators.GreaterThan]?: Partial<Pick<D, Find<D, number>>>;
-    [QueryOperators.LessThan]?: Partial<Pick<D, Find<D, number>>>;
-    [QueryOperators.Pattern]?: PartialRecord<Find<D, string>, RegExp>;
-    [QueryOperators.Length]?: PartialRecord<Find<D, string>, number>;
+    [QueryOperators.Greater]?: Partial<Pick<D, Find<D, number | undefined>>>;
+    [QueryOperators.Less]?: Partial<Pick<D, Find<D, number | undefined>>>;
+    [QueryOperators.GreaterThan]?: Partial<
+        Pick<D, Find<D, number | undefined>>
+    >;
+    [QueryOperators.LessThan]?: Partial<Pick<D, Find<D, number | undefined>>>;
+    [QueryOperators.Pattern]?: PartialRecord<
+        Find<D, string | undefined>,
+        RegExp
+    >;
+    [QueryOperators.Length]?: PartialRecord<
+        Find<D, string | undefined>,
+        number | undefined
+    >;
 }
 
 export interface QueryOptions<D extends AnyObject> {
