@@ -44,7 +44,7 @@ export const execQuery = (
                         }
                     }
                     break;
-                case QueryOperators.Greater:
+                case QueryOperators.GreaterThanEqual:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
                         if (doc[crrKey] < Number(crrValue)) {
                             isMatch = false;
@@ -74,7 +74,7 @@ export const execQuery = (
                     }
 
                     break;
-                case QueryOperators.Less:
+                case QueryOperators.LessThanEqual:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
                         if (doc[crrKey] > Number(crrValue)) {
                             isMatch = false;

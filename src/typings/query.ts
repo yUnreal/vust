@@ -11,8 +11,8 @@ export enum QueryOperators {
     //#region Numbers
     GreaterThan = 'GreaterThan',
     LessThan = 'LessThan',
-    Greater = 'Greater',
-    Less = 'Less',
+    GreaterThanEqual = 'GreaterThanEqual',
+    LessThanEqual = 'LessThanEqual',
     //#endregion
 
     //#region Strings
@@ -26,8 +26,12 @@ export interface QueryOperatorBased<D extends AnyObject> {
     [QueryOperators.NotEqual]?: DeepPartial<D>;
     [QueryOperators.Comment]?: string;
     [QueryOperators.Where]?: WhereQueryFn<D>;
-    [QueryOperators.Greater]?: Partial<Pick<D, Find<D, number | undefined>>>;
-    [QueryOperators.Less]?: Partial<Pick<D, Find<D, number | undefined>>>;
+    [QueryOperators.GreaterThanEqual]?: Partial<
+        Pick<D, Find<D, number | undefined>>
+    >;
+    [QueryOperators.LessThanEqual]?: Partial<
+        Pick<D, Find<D, number | undefined>>
+    >;
     [QueryOperators.GreaterThan]?: Partial<
         Pick<D, Find<D, number | undefined>>
     >;
