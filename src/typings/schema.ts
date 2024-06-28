@@ -3,7 +3,7 @@ import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
 import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
 import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
-import { AnyObject, Find, IsLiteral, IsRecord } from './utils';
+import { AnyObject, Find, IsLiteral, IsRecord, IsTuple } from './utils';
 import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
 import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
 import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
@@ -11,6 +11,7 @@ import { LiteralSchemaKey } from '../structures/schema/LiteralSchemaKey';
 import { RecordSchemaKey } from '../structures/schema/RecordSchemaKey';
 import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
 import { ArraySchemaKey } from '../structures/schema/ArraySchemaKey';
+import { TupleSchemaKey } from '../structures/schema/TupleSchemaKey';
 
 /**
  * All types available in schema keys
@@ -40,6 +41,7 @@ export enum SchemaType {
     Record = 'record',
     Union = 'union',
     Array = 'array',
+    Tuple = 'tuple',
 }
 
 export interface SchemaKeyDefinition<Type extends SchemaType> {
@@ -85,7 +87,9 @@ export type Infer<S extends Record<string, unknown>> = {
 } & { _uid?: UUIDSchemaKey };
 
 export type _infer<V> = V extends unknown[]
-    ? ArraySchemaKey<_infer<V[number]>[]>
+    ? IsTuple<V> extends true
+        ? TupleSchemaKey<{ [K in keyof V]: _infer<V[K]> }>
+        : ArraySchemaKey<_infer<V[number]>[]>
     : V extends Date
     ? DateSchemaKey
     : IsLiteral<V> extends true
@@ -124,6 +128,7 @@ export interface MappedSchemaType {
         SchemaType.Union
     >];
     [SchemaType.Array]: unknown[];
+    [SchemaType.Tuple]: [any, ...any];
 }
 
 export interface MappedSchemaKeys {
@@ -139,6 +144,7 @@ export interface MappedSchemaKeys {
     [SchemaType.Record]: RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
     [SchemaType.Union]: UnionSchemaKey<AnySchemaKey[]>;
     [SchemaType.Array]: ArraySchemaKey<AnySchemaKey[]>;
+    [SchemaType.Tuple]: TupleSchemaKey<AnySchemaKey[]>;
 }
 
 export type AnySchemaKey =
@@ -153,7 +159,8 @@ export type AnySchemaKey =
     | LiteralSchemaKey<unknown>
     | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>
     | UnionSchemaKey<AnySchemaKey[]>
-    | ArraySchemaKey<AnySchemaKey[]>;
+    | ArraySchemaKey<AnySchemaKey[]>
+    | TupleSchemaKey<AnySchemaKey[]>;
 
 export type PropertyKeySchema = StringSchemaKey | NumberSchemaKey;
 

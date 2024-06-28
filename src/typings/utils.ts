@@ -33,3 +33,5 @@ export type IsUnion<T, U extends T = T> = T extends unknown
         ? false
         : true
     : false;
+
+export type IsTuple<T> = T extends [any, ...any] ? true : false;

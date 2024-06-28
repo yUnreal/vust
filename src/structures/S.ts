@@ -12,6 +12,7 @@ import { UUIDSchemaKey } from './schema/UUIDSchemaKey';
 import { AnySchemaKey as AnySchemaKeyType } from '../typings/schema';
 import { UnionSchemaKey } from './schema/UnionSchemaKey';
 import { ArraySchemaKey } from './schema/ArraySchemaKey';
+import { TupleSchemaKey } from './schema/TupleSchemaKey';
 
 /**
  * Main class to create new schema keys
@@ -90,6 +91,10 @@ export class S {
         return new RecordSchemaKey(key, value, { type: SchemaType.Record });
     }
 
+    /**
+     * Creates a union type of schema key types
+     * @param unions The unions
+     */
     public static union<Unions extends AnySchemaKeyType[]>(...unions: Unions) {
         return new UnionSchemaKey(unions, { type: SchemaType.Union });
     }
@@ -100,6 +105,14 @@ export class S {
      */
     public static array<Items extends AnySchemaKeyType[]>(...items: Items) {
         return new ArraySchemaKey(items, { type: SchemaType.Array });
+    }
+
+    /**
+     * Creates a tuple schema key
+     * @param items The items of the tuple
+     */
+    public static tuple<Items extends AnySchemaKeyType[]>(...items: Items) {
+        return new TupleSchemaKey(items, { type: SchemaType.Tuple });
     }
 
     /**
