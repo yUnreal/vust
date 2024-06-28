@@ -172,6 +172,12 @@ export interface UpdateOperatorsBased<D extends AnyObject> {
      * Remove the first or the last item of an array
      */
     [UpdateOperators.Pop]?: PartialRecord<Find<D, unknown[]>, 1 | -1>;
+    /**
+     * Update the entire document data with the `Compose` function
+     *
+     * @remarks This operator will be the last to be executed, take care
+     */
+    [UpdateOperators.Compose]?: ComposeFn<D>;
 }
 
 export type UpdateOptions<D extends AnyObject> =
@@ -187,7 +193,10 @@ export enum UpdateOperators {
     Push = 'Push',
     Unique = 'Unique',
     Pop = 'Pop',
+    Compose = 'Compose',
 }
 
 export type WhereQueryFn<D extends AnyObject> = (data: D) => unknown;
+export type ComposeFn<D extends AnyObject> = (data: D) => unknown;
+
 export type Projection<D extends AnyObject> = PartialRecord<keyof D, boolean>;

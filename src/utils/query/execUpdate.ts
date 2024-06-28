@@ -10,6 +10,8 @@ export const execUpdate = <D extends AnyObject>(
 ) => {
     for (const [operator, value] of Object.entries(options)) {
         switch (operator) {
+            case UpdateOperators.Compose:
+                break;
             case UpdateOperators.Set:
                 if (!isPlainObject(value))
                     throw new VustError(
@@ -139,6 +141,9 @@ export const execUpdate = <D extends AnyObject>(
                 });
         }
     }
+
+    if (typeof options[UpdateOperators.Compose] === 'function')
+        options[UpdateOperators.Compose](data);
 
     return data;
 };
