@@ -40,6 +40,23 @@ export const execUpdate = <D extends AnyObject>(
                 }
 
                 break;
+            case UpdateOperators.Pop:
+                for (const [crrKey, crrValue] of Object.entries(value)) {
+                    if (!Array.isArray(data[crrKey]))
+                        throw new VustError(
+                            `Key "${crrKey}" must be an array to use "${UpdateOperators.Pop}" operator`
+                        );
+                    if (crrValue !== 1 && crrValue !== -1)
+                        throw new VustError(
+                            `Invalid value for "${UpdateOperators.Pop}", expected "1" or "-1"`
+                        );
+
+                    const method = crrValue === 1 ? 'shift' : 'pop';
+
+                    data[crrKey][method]();
+                }
+
+                break;
             case UpdateOperators.Remove:
                 if (!Array.isArray(value))
                     throw new VustError(

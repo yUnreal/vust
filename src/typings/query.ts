@@ -168,6 +168,10 @@ export interface UpdateOperatorsBased<D extends AnyObject> {
         Find<D, unknown[]>,
         D[Find<D, unknown[]>][number] | D[Find<D, unknown[]>]
     >;
+    /**
+     * Remove the first or the last item of an array
+     */
+    [UpdateOperators.Pop]?: PartialRecord<Find<D, unknown[]>, 1 | -1>;
 }
 
 export type UpdateOptions<D extends AnyObject> =
@@ -182,6 +186,7 @@ export enum UpdateOperators {
     Decrement = 'Decrement',
     Push = 'Push',
     Unique = 'Unique',
+    Pop = 'Pop',
 }
 
 export type WhereQueryFn<D extends AnyObject> = (data: D) => unknown;
