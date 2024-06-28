@@ -24,6 +24,9 @@ export enum QueryOperators {
     Pattern = 'Pattern',
     Length = 'Length',
     //#endregion
+
+    //#region Array
+    AllIn = 'AllIn',
 }
 
 export interface QueryOperatorBased<D extends AnyObject> {
@@ -121,10 +124,17 @@ export interface QueryOperatorBased<D extends AnyObject> {
      *         },
      *     },
      * });
-     * 
+     *
      * // Find the first document that the property `name` exists
      */
     [QueryOperators.Exists]?: PartialRecord<keyof D, boolean>;
+    /**
+     * Matches any value where all array values are in the specified array
+     */
+    [QueryOperators.AllIn]?: PartialRecord<
+        Find<D, unknown[]>,
+        D[Find<D, unknown[]>]
+    >;
 }
 
 export interface QueryOptions<D extends AnyObject> {

@@ -149,6 +149,24 @@ export const execQuery = (
                     }
 
                     break;
+                case QueryOperators.AllIn:
+                    for (const [crrKey, array] of Object.entries(value)) {
+                        if (!Array.isArray(array))
+                            throw new VustError(
+                                `Expected an array in key "${crrKey}" in operator "${QueryOperators.AllIn}"`
+                            );
+                        if (!Array.isArray(doc[crrKey]))
+                            throw new VustError(
+                                `Operator "${QueryOperators.AllIn}" can only be used in array-based keys`
+                            );
+                        if (array.some((item) => !doc[crrKey].includes(item))) {
+                            isMatch = false;
+
+                            break;
+                        }
+                    }
+
+                    break;
                 case QueryOperators.Exists:
                     for (const [crrKey, exists] of Object.entries(value)) {
                         if (
