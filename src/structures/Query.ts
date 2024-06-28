@@ -58,13 +58,14 @@ export class Query<D extends AnyObject> {
         return this.set(key, QueryOperators.LessThan, value);
     }
 
-    public greater(key: keyof D, value: number) {
-        return this.set(key, QueryOperators.Less, value);
+    public gte(key: keyof D, value: number) {
+        return this.set(key, QueryOperators.GreaterThanEqual, value);
     }
 
-    public less(key: keyof D, value: number) {
-        return this.set(key, QueryOperators.Less, value);
+    public lte(key: keyof D, value: number) {
+        return this.set(key, QueryOperators.LessThanEqual, value);
     }
+
 
     /**
      * Execute the query in this Query instance

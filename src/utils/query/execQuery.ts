@@ -1,9 +1,8 @@
 /* eslint-disable indent */
-import isPlainObject from 'is-plain-obj';
+import { VustError } from '../../errors/VustError';
 import { QueryOperators, QueryOptions } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 import isEqual from 'lodash.isequal';
-import { VustError } from '../../errors/VustError';
 
 export const execQuery = (
     { query, skip }: QueryOptions<AnyObject>,
@@ -13,19 +12,17 @@ export const execQuery = (
         let isMatch = true;
 
         for (const [key, value] of Object.entries(query)) {
-            if (
-                (key === QueryOperators.Where && typeof value !== 'function') ||
-                (key !== QueryOperators.Where &&
-                    Object.values(QueryOperators).includes(
-                        <QueryOperators>key
-                    ) &&
-                    !isPlainObject(value))
-            )
-                throw new VustError(`Invalid operator "${key}" query`);
-
             switch (key) {
                 case QueryOperators.Comment:
                     continue;
+                case QueryOperators.Or: {
+                    const foundDoc = value.find(
+                        (operation: QueryOptions<AnyObject>['query']) =>
+                            execQuery({ query: operation }, data)
+                    );
+
+                    return foundDoc ?? null;
+                }
                 case QueryOperators.Equal:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
                         if (!isEqual(doc[crrKey], crrValue)) {
@@ -96,7 +93,55 @@ export const execQuery = (
                     break;
                 case QueryOperators.Pattern:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
+                        if (!(crrValue instanceof RegExp))
+                            throw new VustError(
+                                `Expected a regular expression in key "${crrKey}" in operator "${QueryOperators.Pattern}"`
+                            );
+
                         if (!crrValue.test(doc[crrKey])) {
+                            isMatch = false;
+
+                            break;
+                        }
+                    }
+
+                    break;
+                case QueryOperators.In:
+                    for (const [crrKey, crrValue] of Object.entries(value)) {
+                        if (!Array.isArray(crrValue))
+                            throw new VustError(
+                                `Expected an array in key "${crrKey}" in operator "${QueryOperators.In}"`
+                            );
+                        if (!crrValue.includes(doc[crrKey])) {
+                            isMatch = false;
+
+                            break;
+                        }
+                    }
+
+                    break;
+                case QueryOperators.NotIn:
+                    for (const [crrKey, crrValue] of Object.entries(value)) {
+                        if (!Array.isArray(crrValue))
+                            throw new VustError(
+                                `Expected an array in key "${crrKey}" in operator "${QueryOperators.NotIn}"`
+                            );
+                        if (crrValue.includes(doc[crrKey])) {
+                            isMatch = false;
+
+                            break;
+                        }
+                    }
+
+                    break;
+                case QueryOperators.Type:
+                    for (const [crrKey, crrValue] of Object.entries(value)) {
+                        if (typeof crrValue !== 'string')
+                            throw new VustError(
+                                `Expected the type name in key "${crrKey}" in operator "${QueryOperators.Type}"`
+                            );
+
+                        if (typeof doc[crrKey] !== crrValue) {
                             isMatch = false;
 
                             break;

@@ -6,6 +6,10 @@ export enum QueryOperators {
     NotEqual = 'NotEqual',
     Comment = 'Comment',
     Where = 'Where',
+    In = 'In',
+    NotIn = 'NotIn',
+    Or = 'Or',
+    Type = 'Type',
     //#endregion
 
     //#region Numbers
@@ -22,28 +26,87 @@ export enum QueryOperators {
 }
 
 export interface QueryOperatorBased<D extends AnyObject> {
+    /**
+     * Matches any value that is equal
+     */
     [QueryOperators.Equal]?: DeepPartial<D>;
+    /**
+     * Matches any value that is not equal
+     */
     [QueryOperators.NotEqual]?: DeepPartial<D>;
+    /**
+     * Add a comment to the query
+     *
+     * @remarks This key is ignored when finding documents
+     */
     [QueryOperators.Comment]?: string;
+    /**
+     * Matches any value that correpond to this Where function
+     */
     [QueryOperators.Where]?: WhereQueryFn<D>;
+    /**
+     * Matches any value that is greater than or equal to the number
+     */
     [QueryOperators.GreaterThanEqual]?: Partial<
         Pick<D, Find<D, number | undefined>>
     >;
+    /**
+     * Matches any value that is less than or equal to the number
+     */
     [QueryOperators.LessThanEqual]?: Partial<
         Pick<D, Find<D, number | undefined>>
     >;
+    /**
+     * Matches any value that is greater than the number
+     */
     [QueryOperators.GreaterThan]?: Partial<
         Pick<D, Find<D, number | undefined>>
     >;
+    /**
+     * Matches any value that is less than the number
+     */
     [QueryOperators.LessThan]?: Partial<Pick<D, Find<D, number | undefined>>>;
+    /**
+     * Matches any value that correspond to the regexp
+     */
     [QueryOperators.Pattern]?: PartialRecord<
         Find<D, string | undefined>,
         RegExp
     >;
+    /**
+     * Matches any value that the length is equal
+     */
     [QueryOperators.Length]?: PartialRecord<
-        Find<D, string | undefined>,
+        Find<D, string | unknown[] | undefined>,
         number | undefined
     >;
+    /**
+     * Find documents that a value is in the array
+     */
+    [QueryOperators.In]?: PartialRecord<keyof D, D[keyof D][]>;
+    /**
+     * Find documents that a value is not in the array
+     */
+    [QueryOperators.NotIn]?: PartialRecord<keyof D, D[keyof D][]>;
+    /**
+     * Creates a OR clause
+     */
+    [QueryOperators.Or]?: QueryOptions<D>['query'][];
+    /**
+     * Find documents by a key type
+     *
+     * Available types:
+     *
+     * - string
+     * - number
+     * - bigint
+     * - boolean
+     * - object
+     *
+     * @example
+     * users.findUnique({ query: { Type: { age: 'string' } } });
+     */
+    [QueryOperators.Type]?: PartialRecord<keyof D, string>;
 }
 
 export interface QueryOptions<D extends AnyObject> {
@@ -70,11 +133,41 @@ export interface QueryOptions<D extends AnyObject> {
 }
 
 export interface UpdateOperatorsBased<D extends AnyObject> {
+    /**
+     * Remove/Delete the keys that is in the array
+     */
     [UpdateOperators.Remove]?: (keyof D)[];
+    /**
+     * Set the value of a key
+     * @remarks `Set` operator will only update the keys that you passed, and not set the document value to that
+     */
     [UpdateOperators.Set]?: Partial<D>;
+    /**
+     * Rename keys, this does not guarant valid documents
+     */
     [UpdateOperators.Rename]?: PartialRecord<keyof D, string>;
+    /**
+     * Increment a value in a number-based key
+     */
     [UpdateOperators.Increment]?: Partial<Pick<D, Find<D, number>>>;
+    /**
+     * Decrement a value in a number-based key
+     */
     [UpdateOperators.Decrement]?: Partial<Pick<D, Find<D, number>>>;
+    /**
+     * Push a value in a array-based key
+     */
+    [UpdateOperators.Push]?: PartialRecord<
+        Find<D, unknown[]>,
+        D[Find<D, unknown[]>][number]
+    >;
+    /**
+     * Add a item in an array only if the item is not in the array
+     */
+    [UpdateOperators.Unique]?: PartialRecord<
+        Find<D, unknown[]>,
+        D[Find<D, unknown[]>][number] | D[Find<D, unknown[]>]
+    >;
 }
 
 export type UpdateOptions<D extends AnyObject> =
@@ -87,8 +180,9 @@ export enum UpdateOperators {
     Set = 'Set',
     Rename = 'Rename',
     Decrement = 'Decrement',
+    Push = 'Push',
+    Unique = 'Unique',
 }
 
-export type Projection<D extends AnyObject> = PartialRecord<keyof D, boolean>;
-
 export type WhereQueryFn<D extends AnyObject> = (data: D) => unknown;
+export type Projection<D extends AnyObject> = PartialRecord<keyof D, boolean>;

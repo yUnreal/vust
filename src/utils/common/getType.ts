@@ -14,6 +14,7 @@ export const getType = (value: unknown) => {
         case 'string':
             return [SchemaType.String, SchemaType.UUID];
         case 'object':
+            if (Array.isArray(value)) return SchemaType.Array;
             if (value instanceof Date) return SchemaType.Date;
 
             return [SchemaType.Object, SchemaType.Record];

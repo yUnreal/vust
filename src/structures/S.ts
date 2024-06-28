@@ -11,6 +11,7 @@ import { StringSchemaKey } from './schema/StringSchemaKey';
 import { UUIDSchemaKey } from './schema/UUIDSchemaKey';
 import { AnySchemaKey as AnySchemaKeyType } from '../typings/schema';
 import { UnionSchemaKey } from './schema/UnionSchemaKey';
+import { ArraySchemaKey } from './schema/ArraySchemaKey';
 
 /**
  * Main class to create new schema keys
@@ -91,6 +92,14 @@ export class S {
 
     public static union<Unions extends AnySchemaKeyType[]>(...unions: Unions) {
         return new UnionSchemaKey(unions, { type: SchemaType.Union });
+    }
+
+    /**
+     * Creates an array schema key
+     * @param items The items of the array
+     */
+    public static array<Items extends AnySchemaKeyType[]>(...items: Items) {
+        return new ArraySchemaKey(items, { type: SchemaType.Array });
     }
 
     /**

@@ -19,6 +19,27 @@ export const execUpdate = <D extends AnyObject>(
                 data = { ...data, ...value };
 
                 break;
+            case UpdateOperators.Push:
+                for (const [crrKey, crrValue] of Object.entries(value))
+                    data[crrKey].push(crrValue);
+
+                break;
+            case UpdateOperators.Unique:
+                for (const [crrKey, crrValue] of Object.entries(value)) {
+                    if (Array.isArray(crrValue)) {
+                        for (const item of crrValue) {
+                            if (!data[crrKey].includes(item))
+                                data[crrKey].push(item);
+                        }
+
+                        break;
+                    }
+
+                    if (!data[crrKey].includes(crrValue))
+                        data[crrKey].push(crrValue);
+                }
+
+                break;
             case UpdateOperators.Remove:
                 if (!Array.isArray(value))
                     throw new VustError(

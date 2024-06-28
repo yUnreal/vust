@@ -10,6 +10,7 @@ import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
 import { LiteralSchemaKey } from '../structures/schema/LiteralSchemaKey';
 import { RecordSchemaKey } from '../structures/schema/RecordSchemaKey';
 import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
+import { ArraySchemaKey } from '../structures/schema/ArraySchemaKey';
 
 /**
  * All types available in schema keys
@@ -38,6 +39,7 @@ export enum SchemaType {
      */
     Record = 'record',
     Union = 'union',
+    Array = 'array',
 }
 
 export interface SchemaKeyDefinition<Type extends SchemaType> {
@@ -82,7 +84,9 @@ export type Infer<S extends Record<string, unknown>> = {
     [K in keyof S]: _infer<S[K]>;
 } & { _uid?: UUIDSchemaKey };
 
-export type _infer<V> = V extends Date
+export type _infer<V> = V extends unknown[]
+    ? ArraySchemaKey<_infer<V[number]>[]>
+    : V extends Date
     ? DateSchemaKey
     : IsLiteral<V> extends true
     ? LiteralSchemaKey<V>
@@ -119,6 +123,7 @@ export interface MappedSchemaType {
         SchemaType,
         SchemaType.Union
     >];
+    [SchemaType.Array]: unknown[];
 }
 
 export interface MappedSchemaKeys {
@@ -133,6 +138,7 @@ export interface MappedSchemaKeys {
     [SchemaType.Literal]: LiteralSchemaKey<unknown>;
     [SchemaType.Record]: RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
     [SchemaType.Union]: UnionSchemaKey<AnySchemaKey[]>;
+    [SchemaType.Array]: ArraySchemaKey<AnySchemaKey[]>;
 }
 
 export type AnySchemaKey =
@@ -146,7 +152,8 @@ export type AnySchemaKey =
     | DateSchemaKey
     | LiteralSchemaKey<unknown>
     | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>
-    | UnionSchemaKey<AnySchemaKey[]>;
+    | UnionSchemaKey<AnySchemaKey[]>
+    | ArraySchemaKey<AnySchemaKey[]>;
 
 export type PropertyKeySchema = StringSchemaKey | NumberSchemaKey;
 
