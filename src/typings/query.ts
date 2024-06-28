@@ -10,6 +10,7 @@ export enum QueryOperators {
     NotIn = 'NotIn',
     Or = 'Or',
     Type = 'Type',
+    Exists = 'Exists',
     //#endregion
 
     //#region Numbers
@@ -107,6 +108,23 @@ export interface QueryOperatorBased<D extends AnyObject> {
      * users.findUnique({ query: { Type: { age: 'string' } } });
      */
     [QueryOperators.Type]?: PartialRecord<keyof D, string>;
+    /**
+     * Matches any value that exists or not
+     *
+     * @example
+     * users.create({ name: 'John', age: 30 }, { name: 'Bob' });
+     *
+     * users.findUnique({
+     *     query: {
+     *         Exists: {
+     *             name: true,
+     *         },
+     *     },
+     * });
+     * 
+     * // Find the first document that the property `name` exists
+     */
+    [QueryOperators.Exists]?: PartialRecord<keyof D, boolean>;
 }
 
 export interface QueryOptions<D extends AnyObject> {

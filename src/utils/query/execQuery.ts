@@ -149,6 +149,19 @@ export const execQuery = (
                     }
 
                     break;
+                case QueryOperators.Exists:
+                    for (const [crrKey, exists] of Object.entries(value)) {
+                        if (
+                            (exists && !(crrKey in doc)) ||
+                            (!exists && crrKey in doc)
+                        ) {
+                            isMatch = false;
+
+                            break;
+                        }
+                    }
+
+                    break;
                 case QueryOperators.Where:
                     if (!value(doc)) {
                         isMatch = false;
