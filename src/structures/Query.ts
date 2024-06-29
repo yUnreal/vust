@@ -1,5 +1,6 @@
 import { Projection, QueryOperators, QueryOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
+import { execManyQuery } from '../utils/query/execManyQuery';
 import { execQuery } from '../utils/query/execQuery';
 import { project } from '../utils/query/project';
 import { Collection } from './Collection';
@@ -66,7 +67,6 @@ export class Query<D extends AnyObject> {
         return this.set(key, QueryOperators.LessThanEqual, value);
     }
 
-
     /**
      * Execute the query in this Query instance
      * @exmaple
@@ -75,13 +75,20 @@ export class Query<D extends AnyObject> {
      * console.log(query.exec({ ...data }));
      */
     public exec() {
-        let data = <D | null>(
-            execQuery(this.options, this.collection.driver.read())
-        );
+        const data = execQuery(this.options, this.collection.driver.read());
 
         if (data && this.options.projection)
-            data = project(data, this.options.projection);
+            data.doc = project(data.doc, this.options.projection);
 
-        return data;
+        return data?.doc;
+    }
+
+    public execMany() {
+        const docs = execManyQuery(this.options, this.collection.driver.read());
+
+        if (this.options.projection)
+            for (const crrDoc of docs) project(crrDoc, this.options.projection);
+
+        return <D[]>docs;
     }
 }

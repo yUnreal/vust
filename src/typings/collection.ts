@@ -1,3 +1,4 @@
+import { QueryOptions } from './query';
 import { AnyObject } from './utils';
 
 export interface CollectionOptions<D extends AnyObject> {
@@ -23,3 +24,38 @@ export type CreateDocData<Data> = Data & {
      */
     _uid?: string;
 };
+
+export interface InternalQueryResult<D extends AnyObject = AnyObject> {
+    doc: D;
+    index: number;
+}
+
+export interface DeleteManyOptions<D extends AnyObject>
+    extends QueryOptions<D> {
+    /**
+     * The limit of documents to delete
+     */
+    limit?: number;
+}
+
+export interface FindManyOptions<D extends AnyObject> extends QueryOptions<D> {
+    /**
+     * The limit of documents to return
+     */
+    limit?: number;
+}
+
+export interface UpdateManyOptions<D extends AnyObject>
+    extends QueryOptions<D> {
+    /**
+     * The limit of documents to update
+     */
+    limit?: number;
+}
+
+export interface DeleteManyResult {
+    /**
+     * The number of documents deleted
+     */
+    deletedCount: number;
+}

@@ -1,6 +1,13 @@
 import { JSONDriver } from '../drivers/JSONDriver';
 import { CollectionError } from '../errors/CollectionError';
-import { CollectionOptions, CreateDocData } from '../typings/collection';
+import {
+    CollectionOptions,
+    CreateDocData,
+    DeleteManyOptions,
+    DeleteManyResult,
+    FindManyOptions,
+    UpdateManyOptions,
+} from '../typings/collection';
 import { QueryOptions, UpdateOptions } from '../typings/query';
 import { AnyObject } from '../typings/utils';
 import { execUpdate } from '../utils/query/execUpdate';
@@ -91,6 +98,25 @@ export class Collection<Shape extends AnyObject> {
         return options.raw ? value : new Doc(value, this);
     }
 
+    public findMany(options: FindManyOptions<Shape> & { raw: true }): Shape[];
+    public findMany(options: FindManyOptions<Shape>): Doc<Shape>[];
+
+    /**
+     * Find all documents that match the query
+     * @param options The options of the query
+     */
+    public findMany(options: FindManyOptions<Shape>) {
+        const value = new Query(options, this).execMany();
+
+        if (!value || (options.raw && value)) return value;
+
+        const docs = [];
+
+        for (const crrDoc of value) docs.push(new Doc(crrDoc, this));
+
+        return docs;
+    }
+
     /**
      * Deletes one document of the collection
      * @param options The options of the query to delete the document
@@ -107,6 +133,26 @@ export class Collection<Shape extends AnyObject> {
         this.driver.update((crrData) => delete crrData[doc._uid]);
 
         return true;
+    }
+
+    /**
+     * Delete all documents that match the query
+     * @param options The query options
+     */
+    public deleteMany(options: DeleteManyOptions<Shape>): DeleteManyResult {
+        const docs = this.findMany({
+            ...options,
+            projection: { _uid: true },
+            raw: true,
+        });
+
+        if (docs.length === 0) return { deletedCount: 0 };
+
+        this.driver.update((crrData) => {
+            for (const doc of docs) delete crrData[doc._uid];
+        });
+
+        return { deletedCount: docs.length };
     }
 
     /**
@@ -132,12 +178,43 @@ export class Collection<Shape extends AnyObject> {
     }
 
     /**
+     * Update all documents that match the query
+     * @param query The query options
+     * @param options The options to update
+     */
+    public updateMany(
+        query: UpdateManyOptions<Shape>,
+        options: UpdateOptions<Shape>
+    ) {
+        const docs = this.findMany({
+            ...query,
+            projection: { _uid: true },
+            raw: true,
+        });
+
+        if (docs.length === 0)
+            return { updatedCount: 0, docsCount: docs.length };
+
+        this.driver.update((crrData) => {
+            for (const doc of docs)
+                crrData[doc._uid] = execUpdate(doc, options);
+        });
+
+        return { updatedCount: docs.length, docsCount: docs.length };
+    }
+
+    /**
      * Count all documents saved in the collection
      */
-    public count() {
-        const data = this.driver.read();
+    public count({ query, skip }: QueryOptions<Shape>) {
+        const docs = this.findMany({
+            query,
+            skip,
+            projection: { _uid: true },
+            raw: true,
+        });
 
-        return Object.keys(data).length;
+        return docs.length;
     }
 
     /**

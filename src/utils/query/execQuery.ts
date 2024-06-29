@@ -1,15 +1,19 @@
 /* eslint-disable indent */
 import { VustError } from '../../errors/VustError';
+import { InternalQueryResult } from '../../typings/collection';
 import { QueryOperators, QueryOptions } from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 import isEqual from 'lodash.isequal';
 
 export const execQuery = (
-    { query, skip }: QueryOptions<AnyObject>,
+    { query, skip = 0 }: QueryOptions<AnyObject>,
     data: Record<string, AnyObject>
-) => {
-    for (const doc of Object.values(data).slice(skip ?? 0)) {
+): InternalQueryResult | null => {
+    const docs = Object.values(data).slice(skip);
+
+    for (const docIndex in docs) {
         let isMatch = true;
+        const doc = docs[docIndex];
 
         for (const [key, value] of Object.entries(query)) {
             switch (key) {
@@ -197,7 +201,7 @@ export const execQuery = (
             if (!isMatch) break;
         }
 
-        if (isMatch) return doc;
+        if (isMatch) return { doc, index: skip + Number(docIndex) };
     }
 
     return null;
