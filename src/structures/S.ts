@@ -13,6 +13,7 @@ import { AnySchemaKey as AnySchemaKeyType } from '../typings/schema';
 import { UnionSchemaKey } from './schema/UnionSchemaKey';
 import { ArraySchemaKey } from './schema/ArraySchemaKey';
 import { TupleSchemaKey } from './schema/TupleSchemaKey';
+import { BufferSchemaKey } from './schema/BufferSchemaKey';
 
 /**
  * Main class to create new schema keys
@@ -113,6 +114,13 @@ export class S {
      */
     public static tuple<Items extends AnySchemaKeyType[]>(...items: Items) {
         return new TupleSchemaKey(items, { type: SchemaType.Tuple });
+    }
+
+    /**
+     * Creates a new buffer schema key
+     */
+    public static buffer() {
+        return new BufferSchemaKey({ type: SchemaType.Buffer });
     }
 
     /**

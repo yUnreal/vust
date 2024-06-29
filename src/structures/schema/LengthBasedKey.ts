@@ -2,12 +2,12 @@ import { EffectError, SchemaType } from '../../typings/schema';
 import { SchemaKey } from './SchemaKey';
 
 export abstract class LengthBasedKey<
-    Type extends SchemaType.String | SchemaType.Array,
+    Type extends SchemaType.String | SchemaType.Array | SchemaType.Buffer,
 > extends SchemaKey<Type> {
     public min(
         min: number,
         { message }: EffectError = {
-            message: `Min ${this.getName()} length is "${min}"`,
+            message: `Min ${this.type} length is "${min}"`,
         }
     ) {
         return this.effect((value) => value.length >= min, message);
@@ -16,7 +16,7 @@ export abstract class LengthBasedKey<
     public max(
         max: number,
         { message }: EffectError = {
-            message: `Max ${this.getName()} length is "${max}"`,
+            message: `Max ${this.type} length is "${max}"`,
         }
     ) {
         return this.effect((value) => value.length <= max, message);
@@ -25,13 +25,9 @@ export abstract class LengthBasedKey<
     public length(
         length: number,
         { message }: EffectError = {
-            message: `Length of the ${this.getName()} must be "${length}"`,
+            message: `Length of the ${this.type} must be "${length}"`,
         }
     ) {
         return this.effect((value) => value.length === length, message);
-    }
-
-    private getName() {
-        return this.type === SchemaType.String ? 'string' : 'array';
     }
 }

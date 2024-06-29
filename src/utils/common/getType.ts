@@ -17,6 +17,7 @@ export const getType = (value: unknown) => {
             if (Array.isArray(value))
                 return [SchemaType.Array, SchemaType.Tuple];
             if (value instanceof Date) return SchemaType.Date;
+            if (Buffer.isBuffer(value)) return SchemaType.Buffer;
 
             return [SchemaType.Object, SchemaType.Record];
         default:
