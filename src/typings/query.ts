@@ -187,14 +187,26 @@ export interface UpdateOperatorsBased<D extends AnyObject> {
      */
     [UpdateOperators.Push]?: PartialRecord<
         Find<D, unknown[]>,
-        D[Find<D, unknown[]>][number]
+        | D[Find<D, unknown[]>][number]
+        | {
+              /**
+               * Whether must add all items in the array, instead of pushing the array to the array
+               */
+              [UpdateOperators.Bulk]: D[Find<D, unknown[]>][number][];
+          }
     >;
     /**
      * Add a item in an array only if the item is not in the array
      */
     [UpdateOperators.Unique]?: PartialRecord<
         Find<D, unknown[]>,
-        D[Find<D, unknown[]>][number] | D[Find<D, unknown[]>]
+        | D[Find<D, unknown[]>][number]
+        | {
+              /**
+               * Whether must add all items in the array, instead of pushing the array to the array
+               */
+              [UpdateOperators.Bulk]: D[Find<D, unknown[]>][number][];
+          }
     >;
     /**
      * Remove the first or the last item of an array
@@ -222,6 +234,7 @@ export enum UpdateOperators {
     Unique = 'Unique',
     Pop = 'Pop',
     Compose = 'Compose',
+    Bulk = 'Bulk',
 }
 
 export type WhereQueryFn<D extends AnyObject> = (data: D) => unknown;

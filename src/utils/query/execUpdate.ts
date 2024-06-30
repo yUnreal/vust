@@ -22,19 +22,43 @@ export const execUpdate = <D extends AnyObject>(
 
                 break;
             case UpdateOperators.Push:
-                for (const [crrKey, crrValue] of Object.entries(value))
+                for (const [crrKey, crrValue] of Object.entries(value)) {
+                    if (
+                        isPlainObject(crrValue) &&
+                        crrValue[UpdateOperators.Bulk]
+                    ) {
+                        if (!Array.isArray(crrValue[UpdateOperators.Bulk]))
+                            throw new VustError(
+                                `Operator "${UpdateOperators.Bulk}" expected an array of values`
+                            );
+
+                        for (const item of crrValue[UpdateOperators.Bulk])
+                            data[crrKey].push(item);
+
+                        continue;
+                    }
+
                     data[crrKey].push(crrValue);
+                }
 
                 break;
             case UpdateOperators.Unique:
                 for (const [crrKey, crrValue] of Object.entries(value)) {
-                    if (Array.isArray(crrValue)) {
-                        for (const item of crrValue) {
+                    if (
+                        isPlainObject(crrValue) &&
+                        crrValue[UpdateOperators.Bulk]
+                    ) {
+                        if (!Array.isArray(crrValue[UpdateOperators.Bulk]))
+                            throw new VustError(
+                                `Operator "${UpdateOperators.Bulk}" expected an array of values`
+                            );
+
+                        for (const item of crrValue[UpdateOperators.Bulk]) {
                             if (!data[crrKey].includes(item))
                                 data[crrKey].push(item);
                         }
 
-                        break;
+                        continue;
                     }
 
                     if (!data[crrKey].includes(crrValue))
