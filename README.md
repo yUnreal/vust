@@ -116,6 +116,9 @@ Vust has a huge variety of types for schemas:
 -   String: `S.string()` (Represents a string)
 -   UUID: `S.id()` (Represents the unique identifier of a document)
 -   Unions: `S.union(...<Unions>)` (Represents a union of values)
+-   Array: `S.array(...<Items>)` (Represents an array)
+-   Tuple: `S.tuple(...<Items>)` (Represents a tuple)
+-   Buffer: `S.buffer()` (Represents a buffer)
 
 #### Unions
 
@@ -134,6 +137,90 @@ new Schema<User>({
 ```
 
 -   Here the key `age` can be a string or a number.
+
+#### Literal
+
+Literal schema key reprents a literal value, a value that never changes
+
+```ts
+interface Me {
+    name: 'John';
+    age: number;
+}
+
+new Schema<Me>({
+    age: S.literal('John'),
+    age: S.number().integer(),
+});
+```
+
+#### Object
+
+Object schema key represents a shaped object
+
+```ts
+interface Post {
+    content: string;
+    author: {
+        id: string;
+        name: string;
+    };
+}
+
+new Schema<Post>({
+    content: S.string().min(50),
+    author: S.object({
+        id: S.string(),
+        name: S.string(),
+    }),
+});
+```
+
+#### Record
+
+Record schema key represents **any** object
+
+```ts
+interface User {
+    name: string;
+    children: Record<string, { age: number }>;
+}
+
+new Schema<User>({
+    name: S.string(),
+    children: S.record(S.string(), S.object({ age: S.number() })),
+});
+```
+
+#### Array
+
+Array schema key represents any array
+
+```ts
+interface StartWars {
+    jedis: ({ name: string } | string)[];
+}
+
+new Schema<StarWars>({
+    jedis: S.array(S.object({ name: S.string() }), S.string()),
+});
+```
+
+#### Tuple
+
+Tuple schema key represents a tuple
+
+```ts
+interface Candy {
+    name: string;
+    specs: [is_sweet: true, ingredients: string];
+}
+
+new Schema<Candy>({
+    name: S.string(),
+    specs: S.tuple(S.literal(true), S.string()),
+});
+```
 
 ## Congrats
 
