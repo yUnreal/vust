@@ -8,10 +8,10 @@ This local database aims to guide new developers to learn how to use NoSQL datab
 
 -   You need to have the [Node.js](http://nodejs.org/) installed
 
-Next step is install the wasp library:
+Next step is install the vust library:
 
 ```bash
-npm install wasp --save
+npm install vust --save
 ```
 
 ## Create a Schema
