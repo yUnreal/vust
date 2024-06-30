@@ -1,3 +1,4 @@
+import { Path } from 'a-path';
 import { EffectError } from '../../errors/EffectError';
 import {
     Effect,
@@ -9,6 +10,9 @@ import {
 } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
 import { getType } from '../../utils/common/getType';
+import isEqual from 'lodash.isequal';
+import { ValidationError } from '../../errors/ValidationError';
+import { get } from 'lodash';
 
 export abstract class SchemaKey<Type extends SchemaType> {
     protected effects = <Effect<Type>[]>[];
@@ -54,6 +58,14 @@ export abstract class SchemaKey<Type extends SchemaType> {
         if (this.type !== SchemaType.Any && !this.isSafe(value))
             throw new Error(`Invalid schema key type, expected ${this.type}`);
 
+        const { reference } = this.options;
+
+        if (reference && !isEqual(Path.get(fullData, reference), value))
+            throw new ValidationError(
+                `Value must be a reference of key "${reference}"`,
+                reference
+            );
+
         for (const { effect, message } of this.effects) {
             // @ts-expect-error Ignore it
             if (!effect(value)) throw new EffectError(message, value, effect);
@@ -77,6 +89,12 @@ export abstract class SchemaKey<Type extends SchemaType> {
 
     public optional() {
         this.options.optional = true;
+
+        return this;
+    }
+
+    public reference<D extends AnyObject>(path: Path<D>) {
+        this.options.reference = path;
 
         return this;
     }

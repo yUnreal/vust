@@ -51,6 +51,9 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
      * The type of this schema key
      */
     type: Type;
+    /**
+     * Whether the key is optional or not
+     */
     optional?: true;
     /**
      * A function to make a default value when a value is not supplied
@@ -69,6 +72,26 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
      * })
      */
     default?(data: AnyObject): MappedSchemaType[Type];
+    /**
+     * The reference key of the schema key
+     *
+     * @example
+     * const posts = new Schema({
+     *     title: S.string(),
+     *     authorId: S.string(),
+     *     author: S.object({
+     *         name: S.string(),
+     *         id: S.string().reference('authorId'),
+     *     }),
+     * });
+     *
+     * // Works
+     * posts.parse({ title: 'Vust', authorId: '123', author: { name: 'John', id: '123' } });
+     *
+     * // Fails
+     * posts.parse({ title: 'Vust', authorId: '321', author: { name: 'John', id: '123' } });
+     */
+    reference?: string;
 }
 
 /**
