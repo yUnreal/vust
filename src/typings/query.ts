@@ -218,6 +218,34 @@ export interface UpdateOperatorsBased<D extends AnyObject> {
      * @remarks This operator will be the last to be executed, take care
      */
     [UpdateOperators.Compose]?: ComposeFn<D>;
+    /**
+     * Perfom a bitwise update of a field
+     */
+    [UpdateOperators.Bit]?: PartialRecord<
+        Find<D, number>,
+        BitwiseUpdateOptions
+    >;
+}
+
+export interface BitwiseUpdateOptions {
+    /**
+     * The `and` bitwise
+     */
+    [BitwiseUpdateOperators.And]?: number;
+    /**
+     * The `or` bitwise
+     */
+    [BitwiseUpdateOperators.Or]?: number;
+    /**
+     * The `xor` bitwise
+     */
+    [BitwiseUpdateOperators.Xor]?: number;
+}
+
+export enum BitwiseUpdateOperators {
+    And = 'And',
+    Or = 'Or',
+    Xor = 'Xor',
 }
 
 export type UpdateOptions<D extends AnyObject> =
@@ -235,6 +263,7 @@ export enum UpdateOperators {
     Pop = 'Pop',
     Compose = 'Compose',
     Bulk = 'Bulk',
+    Bit = 'Bit',
 }
 
 export type WhereQueryFn<D extends AnyObject> = (data: D) => unknown;

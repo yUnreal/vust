@@ -1,8 +1,13 @@
 /* eslint-disable indent */
 import isPlainObject from 'is-plain-obj';
-import { UpdateOperators, UpdateOptions } from '../../typings/query';
+import {
+    BitwiseUpdateOperators,
+    UpdateOperators,
+    UpdateOptions,
+} from '../../typings/query';
 import { AnyObject } from '../../typings/utils';
 import { VustError } from '../../errors/VustError';
+import { isBitwiseUpdateOptions } from './isBitwiseUpdateOptions';
 
 export const execUpdate = <D extends AnyObject>(
     data: D,
@@ -155,6 +160,34 @@ export const execUpdate = <D extends AnyObject>(
                         value: data[key] - amount,
                         enumerable: true,
                     });
+                }
+
+                break;
+            case UpdateOperators.Bit:
+                for (const [crrKey, crrOptions] of Object.entries(value)) {
+                    if (!isBitwiseUpdateOptions(crrOptions))
+                        throw new VustError(
+                            `Invalid options in bitwise update options in key "${crrKey}"`
+                        );
+
+                    for (const option in crrOptions) {
+                        const crrValue = crrOptions[option];
+
+                        switch (option) {
+                            case BitwiseUpdateOperators.And:
+                                data[crrKey] &= crrValue;
+                                
+                                break;
+                            case BitwiseUpdateOperators.Or:
+                                data[crrKey] |= crrValue;
+
+                                break;
+                            case BitwiseUpdateOperators.Xor:
+                                data[crrKey] ^= crrValue;
+
+                                break;
+                        }
+                    }
                 }
 
                 break;
