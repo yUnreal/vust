@@ -5,6 +5,7 @@ import {
     CreateDocData,
     DeleteManyOptions,
     DeleteManyResult,
+    DeleteOneResult,
     FindManyOptions,
     UpdateManyOptions,
 } from '../typings/collection';
@@ -98,7 +99,9 @@ export class Collection<Shape extends AnyObject> {
         return options.raw ? value : new Doc(value, this);
     }
 
-    public findMany(options: FindManyOptions<Shape> & { raw: true }): Shape[];
+    public findMany(
+        options: FindManyOptions<Shape> & { raw: true }
+    ): (Shape & { _uid: string })[];
     public findMany(options: FindManyOptions<Shape>): Doc<Shape>[];
 
     /**
@@ -121,7 +124,7 @@ export class Collection<Shape extends AnyObject> {
      * Deletes one document of the collection
      * @param options The options of the query to delete the document
      */
-    public deleteOne(options: QueryOptions<Shape>) {
+    public deleteOne(options: QueryOptions<Shape>): DeleteOneResult {
         const doc = this.findUnique({
             ...options,
             projection: { _uid: true },
@@ -132,7 +135,7 @@ export class Collection<Shape extends AnyObject> {
 
         this.driver.update((crrData) => delete crrData[doc._uid]);
 
-        return true;
+        return doc;
     }
 
     /**
@@ -146,13 +149,17 @@ export class Collection<Shape extends AnyObject> {
             raw: true,
         });
 
-        if (docs.length === 0) return { deletedCount: 0 };
+        if (docs.length === 0) return { deletedCount: 0, _uids: [] };
 
         this.driver.update((crrData) => {
             for (const doc of docs) delete crrData[doc._uid];
         });
 
-        return { deletedCount: docs.length };
+        return {
+            deletedCount: docs.length,
+            // @ts-expect-error This works
+            _uids: docs,
+        };
     }
 
     /**
@@ -206,7 +213,10 @@ export class Collection<Shape extends AnyObject> {
     /**
      * Count all documents saved in the collection
      */
-    public count({ query, skip }: QueryOptions<Shape>) {
+    public count({
+        query,
+        skip,
+    }: Omit<QueryOptions<Shape>, 'projection' | 'raw'>) {
         const docs = this.findMany({
             query,
             skip,

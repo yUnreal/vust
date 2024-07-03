@@ -31,7 +31,7 @@ export interface InternalQueryResult<D extends AnyObject = AnyObject> {
 }
 
 export interface DeleteManyOptions<D extends AnyObject>
-    extends QueryOptions<D> {
+    extends Omit<QueryOptions<D>, 'projection' | 'raw'> {
     /**
      * The limit of documents to delete
      */
@@ -58,4 +58,15 @@ export interface DeleteManyResult {
      * The number of documents deleted
      */
     deletedCount: number;
+    /**
+     * The unique ID of the documents that was deleted
+     */
+    _uids: string[];
 }
+
+export type DeleteOneResult = {
+    /**
+     * The unique ID of the document that was deleted
+     */
+    _uid: string;
+} | null;
