@@ -23,6 +23,7 @@ export enum QueryOperators {
     //#region Strings
     Pattern = 'Pattern',
     Length = 'Length',
+    Flags = 'Flags',
     //#endregion
 
     //#region Array
@@ -75,7 +76,7 @@ export interface QueryOperatorBased<D extends AnyObject> {
      */
     [QueryOperators.Pattern]?: PartialRecord<
         Find<D, string | undefined>,
-        RegExp
+        RegExp | string
     >;
     /**
      * Matches any value that the length is equal
@@ -135,6 +136,10 @@ export interface QueryOperatorBased<D extends AnyObject> {
         Find<D, unknown[]>,
         D[Find<D, unknown[]>]
     >;
+    /**
+     * The flags to use with {@link UpdateOperators.Pattern}
+     */
+    [QueryOperators.Flags]?: string;
 }
 
 export interface QueryOptions<D extends AnyObject> {

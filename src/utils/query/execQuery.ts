@@ -17,6 +17,7 @@ export const execQuery = (
 
         for (const [key, value] of Object.entries(query)) {
             switch (key) {
+                case QueryOperators.Flags:
                 case QueryOperators.Comment:
                     continue;
                 case QueryOperators.Or: {
@@ -97,12 +98,20 @@ export const execQuery = (
                     break;
                 case QueryOperators.Pattern:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
-                        if (!(crrValue instanceof RegExp))
+                        if (
+                            !(crrValue instanceof RegExp) &&
+                            typeof crrValue !== 'string'
+                        )
                             throw new VustError(
-                                `Expected a regular expression in key "${crrKey}" in operator "${QueryOperators.Pattern}"`
+                                `Expected a regular expression or string in key "${crrKey}" in operator "${QueryOperators.Pattern}"`
                             );
 
-                        if (!crrValue.test(doc[crrKey])) {
+                        const pattern = new RegExp(
+                            crrValue,
+                            <string>query[QueryOperators.Flags]
+                        );
+
+                        if (!pattern.test(doc[crrKey])) {
                             isMatch = false;
 
                             break;
