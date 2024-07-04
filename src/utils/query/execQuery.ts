@@ -26,7 +26,9 @@ export const execQuery = (
                             execQuery({ query: operation }, data)
                     );
 
-                    return foundDoc ?? null;
+                    return foundDoc
+                        ? { doc: foundDoc, index: skip + Number(docIndex) }
+                        : null;
                 }
                 case QueryOperators.Equal:
                     for (const [crrKey, crrValue] of Object.entries(value)) {
