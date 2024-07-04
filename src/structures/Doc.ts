@@ -71,4 +71,8 @@ export class Doc<Data extends AnyObject> {
 
         return this;
     }
+
+    public toString() {
+        return this._uid;
+    }
 }

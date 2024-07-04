@@ -91,4 +91,8 @@ export class Query<D extends AnyObject> {
 
         return <D[]>docs;
     }
+
+    public toString() {
+        return JSON.stringify(this.options.query, null, '\t');
+    }
 }

@@ -24,4 +24,8 @@ export class JSONDriver<Data extends AnyObject> {
 
         return this;
     }
+
+    public toString() {
+        return this.path;
+    }
 }

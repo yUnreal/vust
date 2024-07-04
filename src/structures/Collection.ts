@@ -240,4 +240,8 @@ export class Collection<Shape extends AnyObject> {
 
         return Boolean(doc);
     }
+
+    public toString() {
+        return this.name;
+    }
 }

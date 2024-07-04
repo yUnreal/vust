@@ -12,7 +12,6 @@ import { AnyObject } from '../../typings/utils';
 import { getType } from '../../utils/common/getType';
 import isEqual from 'lodash.isequal';
 import { ValidationError } from '../../errors/ValidationError';
-import { get } from 'lodash';
 
 export abstract class SchemaKey<Type extends SchemaType> {
     protected effects = <Effect<Type>[]>[];
@@ -97,5 +96,9 @@ export abstract class SchemaKey<Type extends SchemaType> {
         this.options.reference = path;
 
         return this;
+    }
+
+    public toString() {
+        return this.type;
     }
 }
