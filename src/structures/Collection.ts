@@ -1,5 +1,6 @@
 import { JSONDriver } from '../drivers/JSONDriver';
 import { CollectionError } from '../errors/CollectionError';
+import { VustError } from '../errors/VustError';
 import {
     CollectionOptions,
     CreateDocData,
@@ -10,7 +11,7 @@ import {
     UpdateManyOptions,
 } from '../typings/collection';
 import { QueryOptions, UpdateOptions } from '../typings/query';
-import { AnyObject } from '../typings/utils';
+import { AnyObject, DeepPartial } from '../typings/utils';
 import { execUpdate } from '../utils/query/execUpdate';
 import { Doc } from './Doc';
 import { Query } from './Query';
@@ -239,6 +240,34 @@ export class Collection<Shape extends AnyObject> {
         });
 
         return Boolean(doc);
+    }
+
+    /**
+     * Replaces the entire data of a document
+     * @param query The query to find the target document
+     * @param newData The new data for the document
+     */
+    public replaceUnique(
+        query: Pick<QueryOptions<Shape>, 'query' | 'skip'>,
+        newData: DeepPartial<Shape>
+    ) {
+        if ('_uid' in newData)
+            throw new VustError('Cannot update the "_uid" property');
+
+        const doc = this.findUnique({
+            ...query,
+            raw: true,
+            projection: { _uid: true },
+        });
+
+        if (!doc) return null;
+
+        this.driver.update(
+            // @ts-expect-error Ignore it
+            (crrData) => (crrData[doc._uid] = { ...newData, _uid: doc._uid })
+        );
+
+        return new Doc(<Shape>newData, this);
     }
 
     public toString() {

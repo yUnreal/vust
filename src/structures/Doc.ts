@@ -1,6 +1,6 @@
 import isPlainObject from 'is-plain-obj';
 import { UpdateOptions } from '../typings/query';
-import { AnyObject } from '../typings/utils';
+import { AnyObject, DeepPartial } from '../typings/utils';
 import { Collection } from './Collection';
 
 /**
@@ -70,6 +70,16 @@ export class Doc<Data extends AnyObject> {
         );
 
         return this;
+    }
+
+    /**
+     * Replaces the entire data of the document and save in the database
+     * @param data The new data for this document
+     */
+    public replace(data: DeepPartial<Data>) {
+        return <Doc<Data>>(
+            this.collection.replaceUnique({ query: { _uid: this._uid } }, data)
+        );
     }
 
     public toString() {
