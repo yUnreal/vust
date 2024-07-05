@@ -1,14 +1,13 @@
 import { VustError } from '../../errors/VustError';
 import { Projection } from '../../typings/query';
+import { Expression } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
 
 export const project = <D extends AnyObject>(
     data: D,
     projection: Projection<D>
 ): D => {
-    const UNIQUE_DOC_ID_KEY = '_uid';
-
-    if (UNIQUE_DOC_ID_KEY in data) return { _uid: data[UNIQUE_DOC_ID_KEY] };
+    if (Expression.UniqueID in data) return { _uid: data[Expression.UniqueID] };
 
     const newData: Partial<D> = {};
 

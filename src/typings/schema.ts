@@ -1,18 +1,18 @@
+import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
+import { ArraySchemaKey } from '../structures/schema/ArraySchemaKey';
 import { BigIntSchemaKey } from '../structures/schema/BigIntSchemaKey';
 import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
-import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
-import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
-import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
-import { AnyObject, Find, IsLiteral, IsRecord, IsTuple } from './utils';
-import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
-import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
+import { BufferSchemaKey } from '../structures/schema/BufferSchemaKey';
 import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
 import { LiteralSchemaKey } from '../structures/schema/LiteralSchemaKey';
+import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
+import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
 import { RecordSchemaKey } from '../structures/schema/RecordSchemaKey';
-import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
-import { ArraySchemaKey } from '../structures/schema/ArraySchemaKey';
+import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { TupleSchemaKey } from '../structures/schema/TupleSchemaKey';
-import { BufferSchemaKey } from '../structures/schema/BufferSchemaKey';
+import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
+import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
+import { AnyObject, Find, IsLiteral, IsRecord, IsTuple } from './utils';
 
 /**
  * All types available in schema keys
@@ -109,7 +109,7 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
  */
 export type Infer<S extends Record<string, unknown>> = {
     [K in keyof S]: _infer<S[K]>;
-} & { _uid?: UUIDSchemaKey };
+} & { [Expression.UniqueID]?: UUIDSchemaKey };
 
 export type _infer<V> = V extends unknown[]
     ? IsTuple<V> extends true
@@ -225,4 +225,12 @@ export interface SchemaOptions {
 export enum Expression {
     Date = '$date',
     Buffer = '$buffer',
+    /**
+     * @remarks This does not start with "$" because it's the unique ID of a document
+     */
+    UniqueID = '_uid',
 }
+
+export type IsParsableResult<D, E extends Error = Error> =
+    | { success: true; data: D | undefined }
+    | { success: false; error: E };

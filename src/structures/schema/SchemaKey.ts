@@ -4,6 +4,7 @@ import {
     Effect,
     EffectError as EffectErrorType,
     EffectFunction,
+    IsParsableResult,
     MappedSchemaType,
     SchemaKeyDefinition,
     SchemaType,
@@ -39,13 +40,16 @@ export abstract class SchemaKey<Type extends SchemaType> {
             : type === this.type;
     }
 
-    public isParsable(fullData: AnyObject, value?: MappedSchemaType[Type]) {
+    public isParsable(
+        fullData: AnyObject,
+        data?: MappedSchemaType[Type]
+    ): IsParsableResult<MappedSchemaType[Type]> {
         try {
-            this.parse(fullData, value);
+            this.parse(fullData, data);
 
-            return true;
-        } catch {
-            return false;
+            return { success: true, data };
+        } catch (error) {
+            return { success: false, error: error as Error };
         }
     }
 

@@ -1,4 +1,5 @@
 import { QueryOptions } from './query';
+import { Expression } from './schema';
 import { AnyObject } from './utils';
 
 export interface CollectionOptions<D extends AnyObject> {
@@ -22,7 +23,7 @@ export type CreateDocData<Data> = Data & {
     /**
      * The unique identifier of the document
      */
-    _uid?: string;
+    [Expression.UniqueID]?: string;
 };
 
 export interface InternalQueryResult<D extends AnyObject = AnyObject> {
@@ -68,5 +69,5 @@ export type DeleteOneResult = {
     /**
      * The unique ID of the document that was deleted
      */
-    _uid: string;
+    [Expression.UniqueID]: string;
 } | null;

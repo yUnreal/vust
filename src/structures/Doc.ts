@@ -35,7 +35,7 @@ export class Doc<Data extends AnyObject> {
      * The unique UUID of this document
      */
     public get _uid() {
-        return <string>this.data._uid;
+        return <string>this.data[Expression.UniqueID];
     }
 
     /**
@@ -44,7 +44,10 @@ export class Doc<Data extends AnyObject> {
      */
     public update(options: UpdateOptions<Data>) {
         return <Doc<Data>>(
-            this.collection.updateOne({ query: { _uid: this._uid } }, options)
+            this.collection.updateOne(
+                { query: { [Expression.UniqueID]: this[Expression.UniqueID] } },
+                options
+            )
         );
     }
 
@@ -52,7 +55,9 @@ export class Doc<Data extends AnyObject> {
      * Deletes this document in the collection
      */
     public delete() {
-        return this.collection.deleteOne({ query: { _uid: this._uid } });
+        return this.collection.deleteOne({
+            query: { [Expression.UniqueID]: this[Expression.UniqueID] },
+        });
     }
 
     /**
@@ -70,7 +75,7 @@ export class Doc<Data extends AnyObject> {
      */
     public save() {
         this.collection.driver.update(
-            (crrData) => (crrData[this._uid] = this.data)
+            (crrData) => (crrData[this[Expression.UniqueID]] = this.data)
         );
 
         return this;
@@ -82,11 +87,14 @@ export class Doc<Data extends AnyObject> {
      */
     public replace(data: DeepPartial<Data>) {
         return <Doc<Data>>(
-            this.collection.replaceUnique({ query: { _uid: this._uid } }, data)
+            this.collection.replaceUnique(
+                { query: { [Expression.UniqueID]: this[Expression.UniqueID] } },
+                data
+            )
         );
     }
 
     public toString() {
-        return this._uid;
+        return this[Expression.UniqueID];
     }
 }

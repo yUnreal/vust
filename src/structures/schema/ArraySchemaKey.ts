@@ -22,7 +22,9 @@ export class ArraySchemaKey<
 
         if (
             !value.every((item) =>
-                this.items.some((schema) => schema.isParsable(fullData, item))
+                this.items.some(
+                    (schema) => schema.isParsable(fullData, item).success
+                )
             )
         )
             throw new ValidationError(
@@ -30,8 +32,9 @@ export class ArraySchemaKey<
                 value
             );
         if (
-            !this.items.some((schema, crrIndex) =>
-                schema.isParsable(fullData, value![crrIndex])
+            !this.items.some(
+                (schema, crrIndex) =>
+                    schema.isParsable(fullData, value![crrIndex]).success
             )
         )
             1;

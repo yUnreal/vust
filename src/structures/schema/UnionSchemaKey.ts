@@ -23,7 +23,11 @@ export class UnionSchemaKey<
     }
 
     public parse(fullData: AnyObject, value?: unknown) {
-        if (!this.unions.some((schema) => schema.isParsable(fullData, value)))
+        if (
+            !this.unions.some(
+                (schema) => schema.isParsable(fullData, value).success
+            )
+        )
             throw new ValidationError(
                 `Value failed in ${this.unions.length} unions schema`,
                 value

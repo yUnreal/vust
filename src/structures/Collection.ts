@@ -134,15 +134,17 @@ export class Collection<Shape extends AnyObject> {
     public deleteOne(options: QueryOptions<Shape>): DeleteOneResult {
         const doc = this.findUnique({
             ...options,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
             raw: true,
         });
 
         if (!doc) return null;
 
-        this.driver.update((crrData) => delete crrData[doc._uid]);
+        this.driver.update(
+            (crrData) => delete crrData[doc[Expression.UniqueID]]
+        );
 
-        return { _uid: doc._uid };
+        return { [Expression.UniqueID]: doc[Expression.UniqueID] };
     }
 
     /**
@@ -152,14 +154,14 @@ export class Collection<Shape extends AnyObject> {
     public deleteMany(options: DeleteManyOptions<Shape>): DeleteManyResult {
         const docs = this.findMany({
             ...options,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
             raw: true,
         });
 
         if (docs.length === 0) return { deletedCount: 0, _uids: [] };
 
         this.driver.update((crrData) => {
-            for (const doc of docs) delete crrData[doc._uid];
+            for (const doc of docs) delete crrData[doc[Expression.UniqueID]];
         });
 
         return {
@@ -186,7 +188,9 @@ export class Collection<Shape extends AnyObject> {
 
         const updatedData = execUpdate(doc, options);
 
-        this.driver.update((crrData) => (crrData[doc._uid] = updatedData));
+        this.driver.update(
+            (crrData) => (crrData[doc[Expression.UniqueID]] = updatedData)
+        );
 
         return new Doc(updatedData, this);
     }
@@ -202,7 +206,7 @@ export class Collection<Shape extends AnyObject> {
     ) {
         const docs = this.findMany({
             ...query,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
             raw: true,
         });
 
@@ -211,7 +215,7 @@ export class Collection<Shape extends AnyObject> {
 
         this.driver.update((crrData) => {
             for (const doc of docs)
-                crrData[doc._uid] = execUpdate(doc, options);
+                crrData[doc[Expression.UniqueID]] = execUpdate(doc, options);
         });
 
         return { updatedCount: docs.length, docsCount: docs.length };
@@ -227,7 +231,7 @@ export class Collection<Shape extends AnyObject> {
         const docs = this.findMany({
             query,
             skip,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
             raw: true,
         });
 
@@ -241,11 +245,11 @@ export class Collection<Shape extends AnyObject> {
     public exists(query: QueryOptions<Shape>['query']) {
         const doc = this.findUnique({
             query,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
             raw: true,
         });
 
-        return doc ? { _uid: doc._uid } : null;
+        return doc ? { [Expression.UniqueID]: doc[Expression.UniqueID] } : null;
     }
 
     /**
@@ -257,20 +261,26 @@ export class Collection<Shape extends AnyObject> {
         query: Pick<QueryOptions<Shape>, 'query' | 'skip'>,
         newData: DeepPartial<Shape>
     ) {
-        if ('_uid' in newData)
-            throw new VustError('Cannot update the "_uid" property');
+        if (Expression.UniqueID in newData)
+            throw new VustError(
+                `Cannot update the "${Expression.UniqueID}" property`
+            );
 
         const doc = this.findUnique({
             ...query,
             raw: true,
-            projection: { _uid: true },
+            projection: { [Expression.UniqueID]: true },
         });
 
         if (!doc) return null;
 
         this.driver.update(
-            // @ts-expect-error Ignore it
-            (crrData) => (crrData[doc._uid] = { ...newData, _uid: doc._uid })
+            (crrData) =>
+                // @ts-expect-error Ignore it
+                (crrData[doc[Expression.UniqueID]] = {
+                    ...newData,
+                    [Expression.UniqueID]: doc[Expression.UniqueID],
+                })
         );
 
         return new Doc(<Shape>newData, this);

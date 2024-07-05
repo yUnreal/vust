@@ -1,6 +1,11 @@
 import isPlainObject from 'is-plain-obj';
 import uuid from 'uuid-random';
-import { Infer, SchemaType, SchemaOptions } from '../typings/schema';
+import {
+    Infer,
+    SchemaType,
+    SchemaOptions,
+    Expression,
+} from '../typings/schema';
 import { AnyObject } from '../typings/utils';
 import { S } from './S';
 import { SchemaError } from '../errors/SchemaError';
@@ -14,13 +19,13 @@ export class Schema<Shape extends AnyObject> {
         public shape: Infer<Shape>,
         public options = <SchemaOptions>{ strict: true }
     ) {
-        shape['_uid'] ??= S.id();
+        shape[Expression.UniqueID] ??= S.id();
 
         const VALID_ID_TYPES = [SchemaType.String, SchemaType.UUID];
 
-        if (!VALID_ID_TYPES.includes(shape._uid.type))
+        if (!VALID_ID_TYPES.includes(shape[Expression.UniqueID].type))
             throw new SchemaError(
-                'Schema key "_uid" must be a UUID/string schema key',
+                `Schema key "${Expression.UniqueID}" must be a UUID/string schema key`,
                 this
             );
     }
@@ -33,15 +38,15 @@ export class Schema<Shape extends AnyObject> {
         if (!isPlainObject(object))
             throw new ValidationError('Schema value must be an object', object);
 
-        Object.defineProperty(object, '_uid', {
+        Object.defineProperty(object, Expression.UniqueID, {
             value: uuid(),
             enumerable: true,
         });
 
-        if (typeof object._uid !== 'string')
+        if (typeof object[Expression.UniqueID] !== 'string')
             throw new ValidationError(
                 'Invalid unique id, must be a string',
-                object._uid
+                object[Expression.UniqueID]
             );
 
         for (const [key, schema] of Object.entries(this.shape)) {

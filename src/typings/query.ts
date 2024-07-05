@@ -1,3 +1,4 @@
+import { Expression } from './schema';
 import { AnyObject, DeepPartial, Find, PartialRecord } from './utils';
 
 export enum QueryOperators {
@@ -155,7 +156,7 @@ export interface QueryOptions<D extends AnyObject> {
      * The query object to find the document(s)
      */
     query:
-        | (DeepPartial<D> & { _uid?: string })
+        | (DeepPartial<D> & { [Expression.UniqueID]?: string })
         | (QueryOperatorBased<D> & {
               [QueryOperators.Where]?: WhereQueryFn<D>;
           });
