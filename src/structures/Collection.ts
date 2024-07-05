@@ -142,7 +142,7 @@ export class Collection<Shape extends AnyObject> {
 
         this.driver.update((crrData) => delete crrData[doc._uid]);
 
-        return doc;
+        return { _uid: doc._uid };
     }
 
     /**
@@ -245,7 +245,7 @@ export class Collection<Shape extends AnyObject> {
             raw: true,
         });
 
-        return Boolean(doc);
+        return doc ? { _uid: doc._uid } : null;
     }
 
     /**
