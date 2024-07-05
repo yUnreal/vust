@@ -11,6 +11,7 @@ import {
     UpdateManyOptions,
 } from '../typings/collection';
 import { QueryOptions, UpdateOptions } from '../typings/query';
+import { Expression } from '../typings/schema';
 import { AnyObject, DeepPartial } from '../typings/utils';
 import { execUpdate } from '../utils/query/execUpdate';
 import { Doc } from './Doc';
@@ -62,7 +63,12 @@ export class Collection<Shape extends AnyObject> {
         for (const [key, value] of Object.entries(data)) {
             if (value instanceof Date)
                 Object.defineProperty(data, key, {
-                    value: { $date: value.getTime() },
+                    value: { [Expression.Date]: value.getTime() },
+                    enumerable: true,
+                });
+            if (value instanceof Buffer)
+                Object.defineProperty(data, key, {
+                    value: { [Expression.Buffer]: [...value] },
                     enumerable: true,
                 });
         }

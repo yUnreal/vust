@@ -221,3 +221,8 @@ export interface SchemaOptions {
      */
     strict?: boolean;
 }
+
+export enum Expression {
+    Date = '$date',
+    Buffer = '$buffer',
+}
