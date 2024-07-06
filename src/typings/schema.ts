@@ -12,7 +12,14 @@ import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
 import { TupleSchemaKey } from '../structures/schema/TupleSchemaKey';
 import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
 import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
-import { AnyObject, Find, IsLiteral, IsRecord, IsTuple } from './utils';
+import {
+    AnyObject,
+    Find,
+    IsLiteral,
+    IsRecord,
+    IsTuple,
+    IsUnion,
+} from './utils';
 
 /**
  * All types available in schema keys
@@ -108,7 +115,9 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
  * ```
  */
 export type Infer<S extends Record<string, unknown>> = {
-    [K in keyof S]: _infer<S[K]>;
+    [K in keyof S]: IsUnion<Exclude<S[K], undefined>> extends true
+        ? UnionSchemaKey<_infer<S[K]>[]>
+        : _infer<S[K]>;
 } & { [Expression.UniqueID]?: UUIDSchemaKey };
 
 export type _infer<V> = V extends unknown[]

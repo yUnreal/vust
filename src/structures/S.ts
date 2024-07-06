@@ -96,7 +96,12 @@ export class S {
      * Creates a union type of schema key types
      * @param unions The unions
      */
-    public static union<Unions extends AnySchemaKeyType[]>(...unions: Unions) {
+    public static union<
+        Unions extends [
+            AnySchemaKeyType,
+            ...AnySchemaKeyType[],
+        ],
+    >(...unions: Unions) {
         return new UnionSchemaKey(unions, { type: SchemaType.Union });
     }
 
