@@ -12,8 +12,14 @@ export class RecordSchemaKey<
     Value extends AnySchemaKey,
 > extends SchemaKey<SchemaType.Record> {
     public constructor(
-        public key: Key,
-        public value: Value,
+        /**
+         * The schema key of the record key
+         */
+        public readonly key: Key,
+        /**
+         * The schema key of the record value
+         */
+        public readonly value: Value,
         options: SchemaKeyDefinition<SchemaType.Record>
     ) {
         super(options);

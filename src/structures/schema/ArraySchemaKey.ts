@@ -11,6 +11,9 @@ export class ArraySchemaKey<
     Items extends AnySchemaKey[],
 > extends LengthBasedKey<SchemaType.Array> {
     public constructor(
+        /**
+         * The items of the array schema key
+         */
         public items: Items,
         options: SchemaKeyDefinition<SchemaType.Array>
     ) {

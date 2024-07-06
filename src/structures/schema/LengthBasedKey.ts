@@ -4,6 +4,11 @@ import { SchemaKey } from './SchemaKey';
 export abstract class LengthBasedKey<
     Type extends SchemaType.String | SchemaType.Array | SchemaType.Buffer,
 > extends SchemaKey<Type> {
+    /**
+     * The min length of the schema key
+     * @param min The min length
+     * @param param1 Optional error options message
+     */
     public min(
         min: number,
         { message }: EffectError = {
@@ -13,6 +18,11 @@ export abstract class LengthBasedKey<
         return this.effect((value) => value.length >= min, message);
     }
 
+    /**
+     * The max length of the schema key
+     * @param max The max length
+     * @param param1 Optional error options message
+     */
     public max(
         max: number,
         { message }: EffectError = {
@@ -22,6 +32,11 @@ export abstract class LengthBasedKey<
         return this.effect((value) => value.length <= max, message);
     }
 
+    /**
+     * The exact length of the schema key
+     * @param min The length
+     * @param param1 Optional error options message
+     */
     public length(
         length: number,
         { message }: EffectError = {

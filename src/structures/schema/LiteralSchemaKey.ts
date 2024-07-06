@@ -3,7 +3,10 @@ import { SchemaKey } from './SchemaKey';
 
 export class LiteralSchemaKey<V> extends SchemaKey<SchemaType.Literal> {
     public constructor(
-        public value: V,
+        /**
+         * The literal value to check
+         */
+        public readonly value: V,
         options: SchemaKeyDefinition<SchemaType.Literal>
     ) {
         super(options);
