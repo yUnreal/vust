@@ -2,7 +2,7 @@ import isPlainObject from 'is-plain-obj';
 import uuid from 'uuid-random';
 import { Infer, SchemaType, SchemaOptions } from '../typings/schema';
 import { AnyObject } from '../typings/utils';
-import { S } from './S';
+import { S } from './s';
 import { SchemaError } from '../errors/SchemaError';
 import { ValidationError } from '../errors/ValidationError';
 

@@ -5,7 +5,7 @@ import {
 } from '../../typings/schema';
 import { SchemaKey } from './SchemaKey';
 
-export abstract class NumericSchemaKey<
+export abstract class VustNumeric<
     Type extends SchemaType.Number | SchemaType.BigInt,
 > extends SchemaKey<Type> {
     public min(

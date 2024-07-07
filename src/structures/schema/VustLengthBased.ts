@@ -1,7 +1,7 @@
 import { EffectError, SchemaType } from '../../typings/schema';
 import { SchemaKey } from './SchemaKey';
 
-export abstract class LengthBasedKey<
+export abstract class VustLengthBased<
     Type extends SchemaType.String | SchemaType.Array | SchemaType.Buffer,
 > extends SchemaKey<Type> {
     public min(

@@ -7,7 +7,7 @@ import {
 import { AnyObject } from '../../typings/utils';
 import { SchemaKey } from './SchemaKey';
 
-export class UnionSchemaKey<
+export class VustUnion<
     Unions extends AnySchemaKey[],
 > extends SchemaKey<SchemaType.Union> {
     public constructor(

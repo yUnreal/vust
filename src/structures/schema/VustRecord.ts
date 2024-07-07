@@ -7,7 +7,7 @@ import {
 import { AnyObject } from '../../typings/utils';
 import { SchemaKey } from './SchemaKey';
 
-export class RecordSchemaKey<
+export class VustRecord<
     Key extends PropertyKeySchema,
     Value extends AnySchemaKey,
 > extends SchemaKey<SchemaType.Record> {

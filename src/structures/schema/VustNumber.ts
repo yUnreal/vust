@@ -1,7 +1,7 @@
 import { EffectError, SchemaType } from '../../typings/schema';
-import { NumericSchemaKey } from './NumericSchemaKey';
+import { VustNumeric } from './VustNumeric';
 
-export class NumberSchemaKey extends NumericSchemaKey<SchemaType.Number> {
+export class VustNumber extends VustNumeric<SchemaType.Number> {
     public integer(
         { message }: EffectError = { message: 'Value must be an integer' }
     ) {

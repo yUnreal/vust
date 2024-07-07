@@ -8,7 +8,8 @@ export const project = <D extends AnyObject>(
 ): D => {
     const UNIQUE_DOC_ID_KEY = '_uid';
 
-    if (UNIQUE_DOC_ID_KEY in data) return { _uid: data[UNIQUE_DOC_ID_KEY] };
+    if (UNIQUE_DOC_ID_KEY in projection)
+        return { _uid: data[UNIQUE_DOC_ID_KEY] };
 
     const newData: Partial<D> = {};
 

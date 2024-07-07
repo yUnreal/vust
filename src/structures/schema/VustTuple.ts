@@ -6,7 +6,7 @@ import {
 import { AnyObject } from '../../typings/utils';
 import { SchemaKey } from './SchemaKey';
 
-export class TupleSchemaKey<
+export class VustTuple<
     Items extends AnySchemaKey[],
 > extends SchemaKey<SchemaType.Tuple> {
     public constructor(

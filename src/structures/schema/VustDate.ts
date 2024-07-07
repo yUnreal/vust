@@ -1,7 +1,7 @@
 import { EffectError, SchemaType } from '../../typings/schema';
 import { SchemaKey } from './SchemaKey';
 
-export class DateSchemaKey extends SchemaKey<SchemaType.Date> {
+export class VustDate extends SchemaKey<SchemaType.Date> {
     public min(
         value: Date,
         { message }: EffectError = {

@@ -1,18 +1,18 @@
-import { BigIntSchemaKey } from '../structures/schema/BigIntSchemaKey';
-import { BooleanSchemaKey } from '../structures/schema/BooleanSchemaKey';
-import { NumberSchemaKey } from '../structures/schema/NumberSchemaKey';
-import { StringSchemaKey } from '../structures/schema/StringSchemaKey';
-import { UUIDSchemaKey } from '../structures/schema/UUIDSchemaKey';
+import { VustBigInt } from '../structures/schema/VustBigInt';
+import { VustBoolean } from '../structures/schema/VustBoolean';
+import { VustNumber } from '../structures/schema/VustNumber';
+import { VustString } from '../structures/schema/VustString';
+import { VustDocID } from '../structures/schema/VustDocID';
 import { AnyObject, Find, IsLiteral, IsRecord, IsTuple } from './utils';
-import { AnySchemaKey as ASK } from '../structures/schema/AnySchemaKey';
-import { ObjectSchemaKey } from '../structures/schema/ObjectSchemaKey';
-import { DateSchemaKey } from '../structures/schema/DateSchemaKey';
-import { LiteralSchemaKey } from '../structures/schema/LiteralSchemaKey';
-import { RecordSchemaKey } from '../structures/schema/RecordSchemaKey';
-import { UnionSchemaKey } from '../structures/schema/UnionSchemaKey';
-import { ArraySchemaKey } from '../structures/schema/ArraySchemaKey';
-import { TupleSchemaKey } from '../structures/schema/TupleSchemaKey';
-import { BufferSchemaKey } from '../structures/schema/BufferSchemaKey';
+import { VustAny as ASK } from '../structures/schema/VustAny';
+import { VustObject } from '../structures/schema/VustObject';
+import { VustDate } from '../structures/schema/VustDate';
+import { VustLiteral } from '../structures/schema/VustLiteral';
+import { VustRecord } from '../structures/schema/VustRecord';
+import { VustUnion } from '../structures/schema/VustUnion';
+import { ArraySchemaKey } from '../structures/schema/VustArray';
+import { VustTuple } from '../structures/schema/VustTuple';
+import { VustBuffer } from '../structures/schema/VustBuffer';
 
 /**
  * All types available in schema keys
@@ -103,36 +103,36 @@ export interface SchemaKeyDefinition<Type extends SchemaType> {
  *     age: number;
  * }
  *
- * // { name: StringSchemaKey; age: NumberSchemaKey; }
+ * // { name: VustString; age: VustNumber; }
  * type T1 = Infer<Person>;
  * ```
  */
 export type Infer<S extends Record<string, unknown>> = {
     [K in keyof S]: _infer<S[K]>;
-} & { _uid?: UUIDSchemaKey };
+} & { _uid?: VustDocID };
 
 export type _infer<V> = V extends unknown[]
     ? IsTuple<V> extends true
-        ? TupleSchemaKey<{ [K in keyof V]: _infer<V[K]> }>
+        ? VustTuple<{ [K in keyof V]: _infer<V[K]> }>
         : ArraySchemaKey<_infer<V[number]>[]>
     : V extends Date
-    ? DateSchemaKey
+    ? VustDate
     : V extends Buffer
-    ? BufferSchemaKey
+    ? VustBuffer
     : IsLiteral<V> extends true
-    ? LiteralSchemaKey<V>
+    ? VustLiteral<V>
     : V extends AnyObject
     ? IsRecord<V> extends true
-        ? RecordSchemaKey<
+        ? VustRecord<
               InferPropertyKey<V>,
               MappedSchemaKeys[InferType<V[string]>]
           >
-        : ObjectSchemaKey<Infer<V>>
+        : VustObject<Infer<V>>
     : MappedSchemaKeys[InferType<V>];
 
 type InferPropertyKey<V extends AnyObject> = keyof V extends number
-    ? NumberSchemaKey
-    : StringSchemaKey;
+    ? VustNumber
+    : VustString;
 
 /**
  * Infer the schema type of a value
@@ -160,39 +160,39 @@ export interface MappedSchemaType {
 }
 
 export interface MappedSchemaKeys {
-    [SchemaType.String]: StringSchemaKey;
-    [SchemaType.Number]: NumberSchemaKey;
-    [SchemaType.BigInt]: BigIntSchemaKey;
-    [SchemaType.Boolean]: BooleanSchemaKey;
-    [SchemaType.UUID]: UUIDSchemaKey;
+    [SchemaType.String]: VustString;
+    [SchemaType.Number]: VustNumber;
+    [SchemaType.BigInt]: VustBigInt;
+    [SchemaType.Boolean]: VustBoolean;
+    [SchemaType.UUID]: VustDocID;
     [SchemaType.Any]: ASK;
-    [SchemaType.Object]: ObjectSchemaKey<{ [K in string]: AnySchemaKey }>;
-    [SchemaType.Date]: DateSchemaKey;
-    [SchemaType.Literal]: LiteralSchemaKey<unknown>;
-    [SchemaType.Record]: RecordSchemaKey<PropertyKeySchema, AnySchemaKey>;
-    [SchemaType.Union]: UnionSchemaKey<AnySchemaKey[]>;
+    [SchemaType.Object]: VustObject<{ [K in string]: AnySchemaKey }>;
+    [SchemaType.Date]: VustDate;
+    [SchemaType.Literal]: VustLiteral<unknown>;
+    [SchemaType.Record]: VustRecord<PropertyKeySchema, AnySchemaKey>;
+    [SchemaType.Union]: VustUnion<AnySchemaKey[]>;
     [SchemaType.Array]: ArraySchemaKey<AnySchemaKey[]>;
-    [SchemaType.Tuple]: TupleSchemaKey<AnySchemaKey[]>;
-    [SchemaType.Buffer]: BufferSchemaKey;
+    [SchemaType.Tuple]: VustTuple<AnySchemaKey[]>;
+    [SchemaType.Buffer]: VustBuffer;
 }
 
 export type AnySchemaKey =
-    | StringSchemaKey
-    | NumberSchemaKey
-    | BigIntSchemaKey
-    | BooleanSchemaKey
-    | UUIDSchemaKey
+    | VustString
+    | VustNumber
+    | VustBigInt
+    | VustBoolean
+    | VustDocID
     | ASK
-    | ObjectSchemaKey<{ [K in string]: AnySchemaKey }>
-    | DateSchemaKey
-    | LiteralSchemaKey<unknown>
-    | RecordSchemaKey<PropertyKeySchema, AnySchemaKey>
-    | UnionSchemaKey<AnySchemaKey[]>
+    | VustObject<{ [K in string]: AnySchemaKey }>
+    | VustDate
+    | VustLiteral<unknown>
+    | VustRecord<PropertyKeySchema, AnySchemaKey>
+    | VustUnion<AnySchemaKey[]>
     | ArraySchemaKey<AnySchemaKey[]>
-    | TupleSchemaKey<AnySchemaKey[]>
-    | BufferSchemaKey;
+    | VustTuple<AnySchemaKey[]>
+    | VustBuffer;
 
-export type PropertyKeySchema = StringSchemaKey | NumberSchemaKey;
+export type PropertyKeySchema = VustString | VustNumber;
 
 /**
  * The effect function used to validate a value

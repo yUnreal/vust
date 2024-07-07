@@ -1,9 +1,9 @@
 import { VustError } from '../../errors/VustError';
 import { SchemaType } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
-import { LengthBasedKey } from './LengthBasedKey';
+import { VustLengthBased } from './VustLengthBased';
 
-export class BufferSchemaKey extends LengthBasedKey<SchemaType.Buffer> {
+export class VustBuffer extends VustLengthBased<SchemaType.Buffer> {
     /**
      * The reference key from the buffer
      */

@@ -3,7 +3,7 @@ import { SchemaType } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
 import { SchemaKey } from './SchemaKey';
 
-export class UUIDSchemaKey extends SchemaKey<SchemaType.UUID> {
+export class VustDocID extends SchemaKey<SchemaType.UUID> {
     public parse(fullData: AnyObject, value?: string | undefined) {
         super.parse(fullData, value);
 

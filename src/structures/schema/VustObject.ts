@@ -7,7 +7,7 @@ import {
 import { AnyObject } from '../../typings/utils';
 import { SchemaKey } from './SchemaKey';
 
-export class ObjectSchemaKey<
+export class VustObject<
     Shape extends Record<string, AnySchemaKey>,
 > extends SchemaKey<SchemaType.Object> {
     public constructor(

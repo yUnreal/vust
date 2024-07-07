@@ -5,11 +5,11 @@ import {
     SchemaType,
 } from '../../typings/schema';
 import { AnyObject } from '../../typings/utils';
-import { LengthBasedKey } from './LengthBasedKey';
+import { VustLengthBased } from './VustLengthBased';
 
 export class ArraySchemaKey<
     Items extends AnySchemaKey[],
-> extends LengthBasedKey<SchemaType.Array> {
+> extends VustLengthBased<SchemaType.Array> {
     public constructor(
         public items: Items,
         options: SchemaKeyDefinition<SchemaType.Array>
